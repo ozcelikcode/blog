@@ -1,0 +1,195 @@
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/newsreader";
+@import "@fontsource/jetbrains-mono";
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter Variable", sans-serif;
+  --font-serif: "Newsreader Variable", serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --color-accent: oklch(0.45 0.07 216);
+  --color-accent-soft: oklch(0.92 0.02 216);
+  --color-border: oklch(0.9 0.01 240);
+  --color-card: oklch(0.995 0.002 95);
+  --color-muted: oklch(0.53 0.02 250);
+  --color-page: oklch(0.98 0.004 95);
+  --color-strong: oklch(0.22 0.02 255);
+
+  --color-accent-dark: oklch(0.72 0.08 216);
+  --color-accent-soft-dark: oklch(0.25 0.03 238);
+  --color-border-dark: oklch(0.3 0.02 250);
+  --color-card-dark: oklch(0.19 0.02 250);
+  --color-muted-dark: oklch(0.75 0.015 250);
+  --color-page-dark: oklch(0.15 0.015 250);
+  --color-strong-dark: oklch(0.96 0.005 90);
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  :root,
+  html[data-theme="light"] {
+    --page-bg: var(--color-page);
+    --page-fg: var(--color-strong);
+    --page-muted: var(--color-muted);
+    --page-card: var(--color-card);
+    --page-border: var(--color-border);
+    --page-accent: var(--color-accent);
+    --page-accent-soft: var(--color-accent-soft);
+  }
+
+  html.dark,
+  html[data-theme="dark"] {
+    color-scheme: dark;
+    --page-bg: var(--color-page-dark);
+    --page-fg: var(--color-strong-dark);
+    --page-muted: var(--color-muted-dark);
+    --page-card: var(--color-card-dark);
+    --page-border: var(--color-border-dark);
+    --page-accent: var(--color-accent-dark);
+    --page-accent-soft: var(--color-accent-soft-dark);
+  }
+
+  html {
+    background:
+      radial-gradient(circle at top, color-mix(in srgb, var(--page-accent-soft) 55%, transparent), transparent 40%),
+      var(--page-bg);
+    color: var(--page-fg);
+    font-family: var(--font-sans);
+  }
+
+  body {
+    @apply min-h-screen antialiased;
+    background: transparent;
+    color: var(--page-fg);
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--page-accent) 22%, white);
+  }
+
+  a {
+    color: inherit;
+  }
+
+  img {
+    @apply block max-w-full;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--page-accent);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .surface-card {
+    @apply rounded-3xl border p-6 shadow-sm;
+    background: color-mix(in srgb, var(--page-card) 86%, transparent);
+    border-color: color-mix(in srgb, var(--page-border) 78%, transparent);
+    box-shadow: 0 20px 60px -40px color-mix(in srgb, var(--page-fg) 25%, transparent);
+    backdrop-filter: blur(10px);
+  }
+
+  .eyebrow {
+    @apply text-xs font-medium uppercase tracking-[0.2em];
+    color: var(--page-muted);
+  }
+
+  .article-body {
+    @apply text-lg leading-8;
+    color: var(--page-fg);
+  }
+
+  .article-body > * + * {
+    @apply mt-6;
+  }
+
+  .article-body h1,
+  .article-body h2,
+  .article-body h3,
+  .article-body h4 {
+    @apply font-serif tracking-tight;
+    color: var(--page-fg);
+  }
+
+  .article-body h2 {
+    @apply mt-12 text-3xl;
+  }
+
+  .article-body h3 {
+    @apply mt-10 text-2xl;
+  }
+
+  .article-body p,
+  .article-body li,
+  .article-body blockquote {
+    color: color-mix(in srgb, var(--page-fg) 92%, transparent);
+  }
+
+  .article-body a {
+    color: var(--page-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.22em;
+  }
+
+  .article-body ul,
+  .article-body ol {
+    @apply ml-6 space-y-3;
+  }
+
+  .article-body ul {
+    list-style: disc;
+  }
+
+  .article-body ol {
+    list-style: decimal;
+  }
+
+  .article-body blockquote {
+    @apply rounded-r-2xl border-l-4 px-6 py-4 italic;
+    border-color: color-mix(in srgb, var(--page-accent) 45%, transparent);
+    background: color-mix(in srgb, var(--page-accent-soft) 65%, transparent);
+  }
+
+  .article-body pre {
+    @apply overflow-x-auto rounded-2xl border p-5 text-sm leading-7;
+    background: color-mix(in srgb, var(--page-card) 92%, black 4%);
+    border-color: color-mix(in srgb, var(--page-border) 90%, transparent);
+  }
+
+  .article-body code {
+    font-family: var(--font-mono);
+  }
+
+  .article-body :not(pre) > code {
+    @apply rounded px-1.5 py-0.5 text-sm;
+    background: color-mix(in srgb, var(--page-accent-soft) 70%, transparent);
+  }
+
+  .article-body hr {
+    @apply my-10 border-0;
+    border-top: 1px solid color-mix(in srgb, var(--page-border) 88%, transparent);
+  }
+
+  .article-body img {
+    @apply rounded-2xl border;
+    border-color: color-mix(in srgb, var(--page-border) 85%, transparent);
+  }
+}

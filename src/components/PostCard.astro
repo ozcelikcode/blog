@@ -1,0 +1,43 @@
+---
+import type { PostListItem } from "@/features/blog/types";
+import { formatPublishedDate } from "@/lib/utils/dates";
+
+import TagPill from "./TagPill.astro";
+
+interface Props {
+  post: PostListItem;
+}
+
+const { post } = Astro.props;
+---
+
+<article class="surface-card h-full">
+  <div class="flex h-full flex-col gap-5">
+    <div class="flex flex-wrap items-center gap-3 text-sm text-[color:var(--page-muted)]">
+      <span>{formatPublishedDate(post.publishedAt)}</span>
+      <span aria-hidden="true">&middot;</span>
+      <span>{post.readingTimeMinutes} min read</span>
+      {post.isFeatured && (
+        <>
+          <span aria-hidden="true">&middot;</span>
+          <span class="text-[color:var(--page-accent)]">Featured</span>
+        </>
+      )}
+    </div>
+
+    <div class="space-y-3">
+      <h2 class="font-serif text-3xl tracking-tight">
+        <a class="hover:text-[color:var(--page-accent)]" href={`/blog/${post.slug}`}>
+          {post.title}
+        </a>
+      </h2>
+      <p class="text-base leading-7 text-[color:var(--page-muted)]">{post.excerpt}</p>
+    </div>
+
+    <div class="mt-auto flex flex-wrap gap-2">
+      {post.tags.map((tag) => (
+        <TagPill href={`/tags/${tag.slug}`} label={tag.name} />
+      ))}
+    </div>
+  </div>
+</article>

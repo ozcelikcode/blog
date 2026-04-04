@@ -1,0 +1,17 @@
+---
+interface Props {
+  siteTitle: string;
+}
+
+const { siteTitle } = Astro.props;
+---
+
+<footer class="border-t border-[color:var(--page-border)]">
+  <div class="mx-auto flex w-full max-w-6xl flex-col gap-4 px-5 py-8 text-sm text-[color:var(--page-muted)] sm:flex-row sm:items-center sm:justify-between sm:px-8">
+    <p>&copy; {new Date().getFullYear()} {siteTitle}. Built with Astro, SQLite, and Drizzle.</p>
+    <div class="flex items-center gap-4">
+      <a class="hover:text-[color:var(--page-fg)]" href="/rss.xml">RSS</a>
+      <a class="hover:text-[color:var(--page-fg)]" href="/sitemap.xml">Sitemap</a>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,41 @@
+---
+import type { SeoMetadata } from "@/lib/seo/metadata";
+
+interface Props {
+  jsonLd?: Record<string, unknown> | undefined;
+  metadata: SeoMetadata;
+}
+
+const { jsonLd, metadata } = Astro.props;
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{metadata.title}</title>
+<meta name="description" content={metadata.description} />
+<link rel="canonical" href={metadata.canonicalUrl} />
+
+<meta property="og:site_name" content={metadata.siteName} />
+<meta property="og:title" content={metadata.title} />
+<meta property="og:description" content={metadata.description} />
+<meta property="og:type" content={metadata.type} />
+<meta property="og:url" content={metadata.url} />
+{metadata.imageUrl && <meta property="og:image" content={metadata.imageUrl} />}
+
+<meta name="twitter:card" content={metadata.imageUrl ? "summary_large_image" : "summary"} />
+<meta name="twitter:title" content={metadata.title} />
+<meta name="twitter:description" content={metadata.description} />
+{metadata.twitterHandle && <meta name="twitter:site" content={metadata.twitterHandle} />}
+{metadata.imageUrl && <meta name="twitter:image" content={metadata.imageUrl} />}
+
+{metadata.type === "article" && metadata.publishedTime && (
+  <meta property="article:published_time" content={metadata.publishedTime} />
+)}
+{metadata.type === "article" && metadata.modifiedTime && (
+  <meta property="article:modified_time" content={metadata.modifiedTime} />
+)}
+{metadata.type === "article" && metadata.authorName && (
+  <meta property="article:author" content={metadata.authorName} />
+)}
+
+{jsonLd && <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}

@@ -1,0 +1,38 @@
+---
+import BaseHead from "@/components/BaseHead.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import type { SiteSettingsRecord } from "@/features/blog/types";
+import type { SeoMetadata } from "@/lib/seo/metadata";
+import "@/styles/global.css";
+
+interface Props {
+  jsonLd?: Record<string, unknown> | undefined;
+  metadata: SeoMetadata;
+  settings: SiteSettingsRecord;
+}
+
+const { jsonLd, metadata, settings } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead jsonLd={jsonLd} metadata={metadata} />
+  </head>
+  <body>
+    <a
+      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-full focus:bg-[color:var(--page-accent)] focus:px-4 focus:py-2 focus:text-white"
+      href="#content"
+    >
+      Skip to content
+    </a>
+    <div class="flex min-h-screen flex-col">
+      <SiteHeader />
+      <main class="flex-1" id="content">
+        <slot />
+      </main>
+      <SiteFooter siteTitle={settings.siteTitle} />
+    </div>
+  </body>
+</html>

@@ -1,0 +1,46 @@
+---
+import type { PaginationResult } from "@/features/blog/types";
+import { createPageUrl } from "@/lib/http/query";
+
+interface Props {
+  pagination: PaginationResult<unknown>;
+  pathname: string;
+  searchParams: URLSearchParams;
+}
+
+const { pagination, pathname, searchParams } = Astro.props;
+---
+
+{pagination.totalItems > 0 && pagination.totalPages > 1 && (
+  <nav aria-label="Pagination" class="flex items-center justify-between gap-4">
+    <a
+      aria-disabled={!pagination.hasPreviousPage}
+      class:list={[
+        "inline-flex rounded-full border px-4 py-2 text-sm font-medium transition-colors",
+        pagination.hasPreviousPage
+          ? "border-[color:var(--page-border)] hover:border-[color:var(--page-accent)] hover:text-[color:var(--page-accent)]"
+          : "pointer-events-none border-[color:var(--page-border)] text-[color:var(--page-muted)] opacity-60",
+      ]}
+      href={createPageUrl(pathname, searchParams, pagination.currentPage - 1)}
+    >
+      Previous
+    </a>
+
+    <p class="text-sm text-[color:var(--page-muted)]">
+      Page {pagination.currentPage} of {pagination.totalPages}
+    </p>
+
+    <a
+      aria-disabled={!pagination.hasNextPage}
+      class:list={[
+        "inline-flex rounded-full border px-4 py-2 text-sm font-medium transition-colors",
+        pagination.hasNextPage
+          ? "border-[color:var(--page-border)] hover:border-[color:var(--page-accent)] hover:text-[color:var(--page-accent)]"
+          : "pointer-events-none border-[color:var(--page-border)] text-[color:var(--page-muted)] opacity-60",
+      ]}
+      href={createPageUrl(pathname, searchParams, pagination.currentPage + 1)}
+    >
+      Next
+    </a>
+  </nav>
+)}

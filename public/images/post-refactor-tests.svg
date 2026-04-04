@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-labelledby="title">
+  <title id="title">Writing tests that protect refactors</title>
+  <rect width="1200" height="720" fill="#f4efe8" />
+  <rect x="180" y="140" width="840" height="440" rx="28" fill="#fffaf3" stroke="#735841" stroke-width="10" />
+  <path d="M280 260h280M280 330h420M280 400h360" stroke="#735841" stroke-width="20" stroke-linecap="round" />
+  <path d="M790 290l54 56 104-126" fill="none" stroke="#2e7d5c" stroke-width="28" stroke-linecap="round" stroke-linejoin="round" />
+  <rect x="280" y="470" width="280" height="24" rx="12" fill="#dbcab7" />
+</svg>

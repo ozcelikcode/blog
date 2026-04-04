@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-labelledby="title">
+  <title id="title">Search without premature complexity</title>
+  <rect width="1200" height="720" fill="#f1f6f4" />
+  <rect x="170" y="170" width="860" height="120" rx="60" fill="#ffffff" stroke="#7aa09a" stroke-width="16" />
+  <circle cx="295" cy="230" r="34" fill="none" stroke="#2c665d" stroke-width="16" />
+  <line x1="322" y1="257" x2="362" y2="297" stroke="#2c665d" stroke-width="16" stroke-linecap="round" />
+  <rect x="250" y="392" width="700" height="24" rx="12" fill="#b1cdc7" />
+  <rect x="250" y="452" width="540" height="24" rx="12" fill="#b1cdc7" />
+  <rect x="250" y="512" width="630" height="24" rx="12" fill="#b1cdc7" />
+</svg>

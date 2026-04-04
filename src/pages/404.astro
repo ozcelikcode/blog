@@ -1,0 +1,21 @@
+---
+import NotFoundState from "@/components/NotFoundState.astro";
+import { getHomePageData } from "@/features/blog/services/post-service";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { buildPageSeoMetadata } from "@/lib/seo/metadata";
+
+const data = getHomePageData();
+const metadata = buildPageSeoMetadata({
+  description: "The page you requested could not be found.",
+  pathname: "/404",
+  settings: data.settings,
+  title: "404",
+});
+---
+
+<BaseLayout metadata={metadata} settings={data.settings}>
+  <NotFoundState
+    description="The page you requested does not exist. It may have moved, been removed, or never been published."
+    title="Page not found"
+  />
+</BaseLayout>

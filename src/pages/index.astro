@@ -1,0 +1,93 @@
+---
+import NewsletterForm from "@/components/NewsletterForm.astro";
+import PostCard from "@/components/PostCard.astro";
+import TagPill from "@/components/TagPill.astro";
+import { getHomePageData } from "@/features/blog/services/post-service";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { buildPageSeoMetadata } from "@/lib/seo/metadata";
+
+const data = getHomePageData();
+const newsletterState = Astro.url.searchParams.get("newsletter");
+const metadata = buildPageSeoMetadata({
+  pathname: Astro.url.pathname,
+  settings: data.settings,
+});
+---
+
+<BaseLayout metadata={metadata} settings={data.settings}>
+  <section class="mx-auto w-full max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
+    <div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+      <div class="surface-card space-y-6">
+        <p class="eyebrow">Developer-focused publishing</p>
+        <h1 class="max-w-3xl font-serif text-5xl tracking-tight sm:text-6xl">
+          A calm, durable blog stack for technical writing.
+        </h1>
+        <p class="max-w-2xl text-lg leading-8 text-[color:var(--page-muted)]">
+          Server-rendered publishing with Astro, SQLite, and strict TypeScript. Minimal UI,
+          disciplined architecture, and content stored where the application can own it.
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <a
+            class="inline-flex rounded-full bg-[color:var(--page-accent)] px-5 py-3 text-sm font-semibold text-white"
+            href="/blog"
+          >
+            Read the blog
+          </a>
+          <a
+            class="inline-flex rounded-full border border-[color:var(--page-border)] px-5 py-3 text-sm font-semibold"
+            href="/search"
+          >
+            Search posts
+          </a>
+        </div>
+      </div>
+
+      <aside class="surface-card space-y-5">
+        <p class="eyebrow">Tags</p>
+        <div class="flex flex-wrap gap-2">
+          {data.tags.map((tag) => (
+            <TagPill href={`/tags/${tag.slug}`} label={`${tag.name} (${tag.postCount})`} />
+          ))}
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="mx-auto w-full max-w-6xl px-5 pb-16 sm:px-8">
+    <div class="mb-8 flex items-end justify-between gap-4">
+      <div>
+        <p class="eyebrow">Featured</p>
+        <h2 class="mt-2 font-serif text-4xl tracking-tight">Selected posts</h2>
+      </div>
+      <a class="text-sm text-[color:var(--page-muted)] hover:text-[color:var(--page-accent)]" href="/blog">
+        View all posts
+      </a>
+    </div>
+    <div class="grid gap-6 lg:grid-cols-2">
+      {data.featuredPosts.map((post) => (
+        <PostCard post={post} />
+      ))}
+    </div>
+  </section>
+
+  <section class="mx-auto w-full max-w-6xl px-5 pb-16 sm:px-8">
+    <div class="mb-8">
+      <p class="eyebrow">Latest</p>
+      <h2 class="mt-2 font-serif text-4xl tracking-tight">Recent writing</h2>
+    </div>
+    <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+      {data.latestPosts.map((post) => (
+        <PostCard post={post} />
+      ))}
+    </div>
+  </section>
+
+  <div class="mx-auto w-full max-w-6xl px-5 pb-16 sm:px-8">
+    <NewsletterForm
+      description={data.settings.newsletterDescription}
+      heading={data.settings.newsletterHeading}
+      redirectTo={Astro.url.pathname}
+      state={newsletterState === "subscribed" || newsletterState === "already-subscribed" || newsletterState === "invalid" ? newsletterState : null}
+    />
+  </div>
+</BaseLayout>

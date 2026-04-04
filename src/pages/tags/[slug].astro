@@ -1,0 +1,72 @@
+---
+import NotFoundState from "@/components/NotFoundState.astro";
+import PaginationNav from "@/components/PaginationNav.astro";
+import PostCard from "@/components/PostCard.astro";
+import { getTagPageData } from "@/features/blog/services/post-service";
+import { parsePageQuery } from "@/features/blog/validators/post-queries";
+import { parseSlugParam } from "@/lib/http/params";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { buildPageSeoMetadata } from "@/lib/seo/metadata";
+
+const slug = parseSlugParam(Astro.params.slug, "tag slug");
+const page = parsePageQuery(Astro.url.searchParams);
+const data = getTagPageData(slug, page);
+
+if (!data || data.pagination.isOutOfRange) {
+  Astro.response.status = 404;
+}
+
+const fallbackSettings = data?.settings ?? {
+  defaultOgImageUrl: null,
+  newsletterDescription: "Subscribe for new posts.",
+  newsletterHeading: "Stay up to date",
+  siteDescription: "Developer blog",
+  siteTitle: "Developer Blog",
+  siteUrl: "http://localhost:4321",
+  twitterHandle: null,
+};
+
+const metadata = buildPageSeoMetadata({
+  description: data ? `Posts filed under ${data.tag.name}.` : "Posts by tag.",
+  pathname: Astro.url.pathname,
+  settings: fallbackSettings,
+  title: data ? `${data.tag.name} posts` : "Tag",
+});
+---
+
+<BaseLayout metadata={metadata} settings={fallbackSettings}>
+  {data ? (
+    <>
+      <section class="mx-auto w-full max-w-6xl px-5 py-16 sm:px-8">
+        <div class="max-w-3xl space-y-4">
+          <p class="eyebrow">Tag archive</p>
+          <h1 class="font-serif text-5xl tracking-tight">{data.tag.name}</h1>
+          <p class="text-lg leading-8 text-[color:var(--page-muted)]">
+            {data.tag.postCount} published {data.tag.postCount === 1 ? "post" : "posts"} filed
+            under this topic.
+          </p>
+        </div>
+      </section>
+
+      <section class="mx-auto w-full max-w-6xl px-5 pb-16 sm:px-8">
+        <div class="space-y-8">
+          <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {data.pagination.items.map((post) => (
+              <PostCard post={post} />
+            ))}
+          </div>
+          <PaginationNav
+            pagination={data.pagination}
+            pathname={Astro.url.pathname}
+            searchParams={Astro.url.searchParams}
+          />
+        </div>
+      </section>
+    </>
+  ) : (
+    <NotFoundState
+      description="That tag does not exist or does not have any published posts."
+      title="Tag not found"
+    />
+  )}
+</BaseLayout>

@@ -1,0 +1,112 @@
+---
+import ArticleBody from "@/components/ArticleBody.astro";
+import NewsletterForm from "@/components/NewsletterForm.astro";
+import NotFoundState from "@/components/NotFoundState.astro";
+import PostCard from "@/components/PostCard.astro";
+import TagPill from "@/components/TagPill.astro";
+import { getPostPageData } from "@/features/blog/services/post-service";
+import { parseSlugParam } from "@/lib/http/params";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { buildArticleJsonLd, buildPageSeoMetadata, toAbsoluteUrl } from "@/lib/seo/metadata";
+import { formatPublishedDate } from "@/lib/utils/dates";
+
+const slug = parseSlugParam(Astro.params.slug, "post slug");
+const data = getPostPageData(slug);
+
+if (!data) {
+  Astro.response.status = 404;
+}
+
+const fallbackSettings = data?.settings ?? {
+  defaultOgImageUrl: null,
+  newsletterDescription: "Subscribe for new posts.",
+  newsletterHeading: "Stay up to date",
+  siteDescription: "Developer blog",
+  siteTitle: "Developer Blog",
+  siteUrl: "http://localhost:4321",
+  twitterHandle: null,
+};
+
+const metadata = buildPageSeoMetadata({
+  canonicalUrl: data?.post.canonicalUrl,
+  description: data?.post.seoDescription ?? data?.post.excerpt,
+  imageUrl: data?.post.coverImageUrl,
+  pathname: Astro.url.pathname,
+  settings: fallbackSettings,
+  title: data?.post.seoTitle ?? data?.post.title,
+  type: "article",
+});
+
+const jsonLd =
+  data &&
+  buildArticleJsonLd({
+    authorName: data.post.author.name,
+    description: data.post.seoDescription ?? data.post.excerpt,
+    headline: data.post.title,
+    imageUrl: data.post.coverImageUrl
+      ? toAbsoluteUrl(data.settings.siteUrl, data.post.coverImageUrl)
+      : undefined,
+    publishedTime: data.post.publishedAt,
+    settings: data.settings,
+    url: metadata.url,
+  });
+
+const newsletterState = Astro.url.searchParams.get("newsletter");
+---
+
+<BaseLayout jsonLd={jsonLd ?? undefined} metadata={metadata} settings={fallbackSettings}>
+  {data ? (
+    <>
+      <article class="mx-auto w-full max-w-3xl px-5 py-16 sm:px-8">
+        <header class="space-y-6">
+          <div class="flex flex-wrap items-center gap-3 text-sm text-[color:var(--page-muted)]">
+            <span>{formatPublishedDate(data.post.publishedAt)}</span>
+            <span aria-hidden="true">&middot;</span>
+            <span>{data.post.readingTimeMinutes} min read</span>
+          </div>
+
+          <h1 class="font-serif text-5xl tracking-tight sm:text-6xl">{data.post.title}</h1>
+          <p class="text-xl leading-8 text-[color:var(--page-muted)]">{data.post.excerpt}</p>
+
+          <div class="flex flex-wrap gap-2">
+            {data.post.tags.map((tag) => (
+              <TagPill href={`/tags/${tag.slug}`} label={tag.name} />
+            ))}
+          </div>
+        </header>
+
+        <div class="mt-12">
+          <ArticleBody html={data.post.contentHtml} />
+        </div>
+      </article>
+
+      <section class="mx-auto w-full max-w-6xl px-5 pb-16 sm:px-8">
+        <NewsletterForm
+          description={data.settings.newsletterDescription}
+          heading={data.settings.newsletterHeading}
+          redirectTo={Astro.url.pathname}
+          state={newsletterState === "subscribed" || newsletterState === "already-subscribed" || newsletterState === "invalid" ? newsletterState : null}
+        />
+      </section>
+
+      {data.relatedPosts.length > 0 && (
+        <section class="mx-auto w-full max-w-6xl px-5 pb-16 sm:px-8">
+          <div class="mb-8">
+            <p class="eyebrow">Related</p>
+            <h2 class="mt-2 font-serif text-4xl tracking-tight">More to read next</h2>
+          </div>
+          <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {data.relatedPosts.map((post) => (
+              <PostCard post={post} />
+            ))}
+          </div>
+        </section>
+      )}
+    </>
+  ) : (
+    <NotFoundState
+      description="The post you requested is unavailable, unpublished, or no longer exists."
+      title="Post not found"
+    />
+  )}
+</BaseLayout>

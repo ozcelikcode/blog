@@ -1,0 +1,42 @@
+<button
+  class="inline-flex h-10 items-center justify-center rounded-full border px-4 text-sm font-medium transition-colors hover:border-[var(--page-accent)] hover:text-[var(--page-accent)]"
+  id="theme-toggle"
+  type="button"
+>
+  Toggle theme
+</button>
+
+<script is:inline>
+  const storageKey = "developer-blog-theme";
+  const button = document.querySelector("#theme-toggle");
+  const root = document.documentElement;
+  const media = window.matchMedia("(prefers-color-scheme: dark)");
+
+  const resolveTheme = () => localStorage.getItem(storageKey) ?? (media.matches ? "dark" : "light");
+
+  const applyTheme = (theme) => {
+    root.classList.toggle("dark", theme === "dark");
+    root.dataset.theme = theme;
+
+    if (button instanceof HTMLButtonElement) {
+      button.textContent = theme === "dark" ? "Light mode" : "Dark mode";
+      button.setAttribute("aria-pressed", String(theme === "dark"));
+    }
+  };
+
+  applyTheme(resolveTheme());
+
+  button?.addEventListener("click", () => {
+    const nextTheme = root.dataset.theme === "dark" ? "light" : "dark";
+    localStorage.setItem(storageKey, nextTheme);
+    applyTheme(nextTheme);
+  });
+
+  media.addEventListener("change", (event) => {
+    if (localStorage.getItem(storageKey)) {
+      return;
+    }
+
+    applyTheme(event.matches ? "dark" : "light");
+  });
+</script>

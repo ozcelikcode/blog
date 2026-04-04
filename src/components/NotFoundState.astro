@@ -1,0 +1,22 @@
+---
+interface Props {
+  description: string;
+  title: string;
+}
+
+const { description, title } = Astro.props;
+---
+
+<section class="mx-auto flex min-h-[60vh] w-full max-w-3xl flex-col items-center justify-center px-5 text-center sm:px-8">
+  <div class="surface-card w-full space-y-4">
+    <p class="eyebrow">Not found</p>
+    <h1 class="font-serif text-5xl tracking-tight">{title}</h1>
+    <p class="mx-auto max-w-xl text-base leading-7 text-[color:var(--page-muted)]">{description}</p>
+    <a
+      class="inline-flex rounded-full bg-[color:var(--page-accent)] px-5 py-3 text-sm font-semibold text-white"
+      href="/blog"
+    >
+      Browse the blog
+    </a>
+  </div>
+</section>

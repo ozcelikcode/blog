@@ -1,0 +1,51 @@
+---
+type NewsletterUiState = "already-subscribed" | "invalid" | "subscribed" | null;
+
+interface Props {
+  redirectTo: string;
+  state?: NewsletterUiState;
+  description: string;
+  heading: string;
+}
+
+const { description, heading, redirectTo, state = null } = Astro.props;
+
+const stateMessage =
+  state === "subscribed"
+    ? "You’re subscribed."
+    : state === "already-subscribed"
+      ? "That email is already subscribed."
+      : state === "invalid"
+        ? "Enter a valid email address."
+        : null;
+---
+
+<section class="surface-card">
+  <div class="max-w-2xl space-y-3">
+    <p class="eyebrow">Newsletter</p>
+    <h2 class="font-serif text-4xl tracking-tight">{heading}</h2>
+    <p class="text-base leading-7 text-[color:var(--page-muted)]">{description}</p>
+  </div>
+
+  <form action="/api/newsletter" class="mt-6 flex flex-col gap-4 sm:flex-row" method="post">
+    <input name="redirectTo" type="hidden" value={redirectTo} />
+    <label class="flex-1">
+      <span class="sr-only">Email address</span>
+      <input
+        class="h-12 w-full rounded-full border border-[color:var(--page-border)] bg-transparent px-5 text-base"
+        name="email"
+        placeholder="you@example.com"
+        required
+        type="email"
+      />
+    </label>
+    <button
+      class="inline-flex h-12 items-center justify-center rounded-full bg-[color:var(--page-accent)] px-6 text-sm font-semibold text-white"
+      type="submit"
+    >
+      Subscribe
+    </button>
+  </form>
+
+  {stateMessage && <p class="mt-4 text-sm text-[color:var(--page-muted)]">{stateMessage}</p>}
+</section>

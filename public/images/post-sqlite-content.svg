@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-labelledby="title">
+  <title id="title">SQLite for content systems</title>
+  <rect width="1200" height="720" fill="#eef2f7" />
+  <ellipse cx="600" cy="220" rx="240" ry="80" fill="#355372" />
+  <rect x="360" y="220" width="480" height="220" fill="#355372" />
+  <ellipse cx="600" cy="440" rx="240" ry="80" fill="#547495" />
+  <ellipse cx="600" cy="220" rx="160" ry="46" fill="#9ab4cb" fill-opacity="0.65" />
+  <rect x="250" y="520" width="700" height="24" rx="12" fill="#7b97b2" />
+</svg>

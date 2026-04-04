@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.astro/
+coverage/
+playwright-report/
+test-results/
+
+data/*.db
+data/*.db-shm
+data/*.db-wal
+!data/.gitkeep
+
+backups/*
+!backups/.gitkeep
