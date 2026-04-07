@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Codex | Media Library</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Newsreader:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#d0ecff",
+                        "primary-fixed-dim": "#d6d4d3",
+                        "primary-fixed": "#e5e2e1",
+                        "on-tertiary-fixed": "#2c4655",
+                        "background": "#f9f9f9",
+                        "on-primary-fixed": "#403f3f",
+                        "primary-dim": "#535252",
+                        "on-secondary": "#fbf8f8",
+                        "on-background": "#2d3435",
+                        "surface-tint": "#5f5e5e",
+                        "surface-container-high": "#e4e9ea",
+                        "tertiary-fixed-dim": "#c2def0",
+                        "secondary-fixed-dim": "#d6d4d3",
+                        "tertiary-container": "#d0ecff",
+                        "on-tertiary-fixed-variant": "#486272",
+                        "on-primary-container": "#525151",
+                        "on-error-container": "#752121",
+                        "on-tertiary": "#f4faff",
+                        "error-dim": "#4e0309",
+                        "on-secondary-fixed": "#3f3f3f",
+                        "primary-container": "#e5e2e1",
+                        "on-secondary-container": "#525252",
+                        "secondary": "#5f5f5f",
+                        "inverse-primary": "#ffffff",
+                        "on-primary": "#faf7f6",
+                        "on-primary-fixed-variant": "#5c5b5b",
+                        "surface": "#f9f9f9",
+                        "surface-dim": "#d4dbdd",
+                        "inverse-surface": "#0c0f0f",
+                        "error-container": "#fe8983",
+                        "tertiary-dim": "#3c5666",
+                        "on-secondary-fixed-variant": "#5c5b5b",
+                        "surface-container-highest": "#dde4e5",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#5f5e5e",
+                        "surface-container": "#ebeeef",
+                        "outline-variant": "#adb3b4",
+                        "secondary-dim": "#535353",
+                        "surface-bright": "#f9f9f9",
+                        "error": "#9f403d",
+                        "on-error": "#fff7f6",
+                        "outline": "#757c7d",
+                        "surface-container-low": "#f2f4f4",
+                        "secondary-fixed": "#e4e2e1",
+                        "surface-variant": "#dde4e5",
+                        "on-surface": "#2d3435",
+                        "secondary-container": "#e4e2e1",
+                        "inverse-on-surface": "#9c9d9d",
+                        "on-surface-variant": "#5a6061",
+                        "tertiary": "#486272",
+                        "on-tertiary-container": "#3e5868"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Newsreader"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .font-serif-italic { font-family: 'Newsreader', serif; font-style: italic; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex">
+<!-- SideNavBar -->
+<aside class="h-screen w-64 border-r border-slate-200 bg-slate-50 flex flex-col py-6 shrink-0">
+<div class="px-6 mb-8">
+<h1 class="text-2xl italic font-serif text-slate-900">The Codex</h1>
+<p class="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-bold mt-1">Admin Console</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-6 py-3 text-slate-500 pl-4 hover:bg-slate-200 transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-500 pl-4 hover:bg-slate-200 transition-colors" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="text-sm font-medium">Posts</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-900 font-bold border-l-2 border-slate-900 pl-4 bg-slate-200 transition-colors" href="#">
+<span class="material-symbols-outlined">image</span>
+<span class="text-sm">Media</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-500 pl-4 hover:bg-slate-200 transition-colors" href="#">
+<span class="material-symbols-outlined">label</span>
+<span class="text-sm font-medium">Tags</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-500 pl-4 hover:bg-slate-200 transition-colors" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-sm font-medium">Authors</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-slate-500 pl-4 hover:bg-slate-200 transition-colors" href="#">
+<span class="material-symbols-outlined">mail</span>
+<span class="text-sm font-medium">Subscribers</span>
+</a>
+<div class="pt-4 mt-4 border-t border-slate-200">
+<a class="flex items-center gap-3 px-6 py-3 text-slate-500 pl-4 hover:bg-slate-200 transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+</div>
+</nav>
+<div class="px-6 mt-auto">
+<button class="w-full py-3 bg-primary text-on-primary rounded-lg text-sm font-medium flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
+<span class="material-symbols-outlined text-sm">add</span>
+                New Post
+            </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col min-w-0">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center px-8 h-16 w-full bg-white/80 backdrop-blur-xl border-b border-slate-200 sticky top-0 z-40">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-lg py-2 pl-10 pr-4 text-sm focus:ring-1 focus:ring-primary placeholder-slate-400" placeholder="Search assets..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-sm font-medium text-slate-900 hover:text-slate-700 transition-opacity active:opacity-80">Quick Add</button>
+<div class="flex items-center gap-4 border-l border-slate-200 pl-6">
+<span class="material-symbols-outlined text-slate-500 cursor-pointer hover:text-slate-900">notifications</span>
+<span class="material-symbols-outlined text-slate-500 cursor-pointer hover:text-slate-900">help</span>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-slate-200">
+<img class="w-full h-full object-cover" data-alt="Professional headshot of a mature editor in a clean studio setting with soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC06C5brPShJwJtuJjwfFhKvIqZBhX-zZWmMu2IbvoEcQ-Ug4aMLZsiywmt7fxrtP00gTp72zbI9bxIiLR6Tpr64j_gJC_4oDYTF05xV7KIWkF1AUCvP-YqJAtTS4VgNnOzx0sepzaH2Qm4upsXVGBUWP_uh2Bsu2vp77fkT8bqcLLXTg-2KN2lJsullOtbODVIKKui1wGMK0mI8H_dpUni8qHFhLd3P5-LpDOW9o0P8--5wprTGBfLKp-Nu78wQdnFpTBbFokyS3k"/>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-1 flex overflow-hidden">
+<!-- Asset Gallery Section -->
+<div class="flex-1 overflow-y-auto p-8 bg-surface">
+<div class="max-w-6xl mx-auto">
+<div class="flex justify-between items-end mb-10">
+<div>
+<span class="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-bold">Curation</span>
+<h2 class="text-4xl font-serif italic text-slate-900 mt-1">Media Library</h2>
+</div>
+<button class="px-6 py-2 border-2 border-dashed border-outline-variant text-primary rounded-lg text-sm font-medium hover:bg-surface-container-high transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">cloud_upload</span>
+                            Upload New Asset
+                        </button>
+</div>
+<!-- Filter Bar -->
+<div class="flex items-center gap-4 mb-8">
+<button class="px-4 py-1.5 rounded-full bg-primary text-on-primary text-xs font-medium">All Assets</button>
+<button class="px-4 py-1.5 rounded-full border border-outline-variant text-on-surface-variant text-xs font-medium hover:bg-surface-container-high transition-colors">Images</button>
+<button class="px-4 py-1.5 rounded-full border border-outline-variant text-on-surface-variant text-xs font-medium hover:bg-surface-container-high transition-colors">Documents</button>
+<button class="px-4 py-1.5 rounded-full border border-outline-variant text-on-surface-variant text-xs font-medium hover:bg-surface-container-high transition-colors">Video</button>
+<div class="ml-auto flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">sort</span>
+<span class="text-xs font-medium">Sort: Newest First</span>
+</div>
+</div>
+<!-- Asset Grid -->
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+<!-- Asset Card 1 (Selected) -->
+<div class="group cursor-pointer">
+<div class="aspect-square bg-white border-2 border-slate-900 overflow-hidden relative p-1">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300" data-alt="Abstract 3D render of flowing silk-like dark grey surfaces with dramatic studio lighting and sharp shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiQNESovpZCU1Pz06ECkncPzVz1hCva5lO4hFJ3iIXYgmFeTB_cJp7XvzcOgblEfhvWGZi30tIYCvuKUZ_bqcDZphCxgmPZEw2fVnOhcCT2kySCOA8J3UbdTvENJekAW4QZFhDQcyokQeCh61pYajKucNw-OIuJQo8m50midPDMOppfRMeq37jcNu6EMlErjW1WfLlQzdk1obKK9dJy-IarIBB3KqWJBeaxfx6Fa7uCCwyTjHtEL1-eFCWiPUYuKpoL2d1BmTcUEc"/>
+<div class="absolute top-2 right-2 bg-slate-900 text-white p-1 rounded-sm">
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+<p class="mt-2 text-xs font-semibold text-slate-900 truncate">texture-void-01.webp</p>
+<p class="text-[10px] text-slate-500">124 KB</p>
+</div>
+<!-- Asset Card 2 -->
+<div class="group cursor-pointer">
+<div class="aspect-square bg-white border border-slate-200 overflow-hidden relative p-1 group-hover:border-slate-400 transition-colors">
+<img class="w-full h-full object-cover grayscale" data-alt="Minimalist abstract render of geometric spheres and cylinders in charcoal grey monochromatic palette with soft ambient occlusion" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPdP7HSedpxnRBMSadG9vOFAQCiB0bX1l9FGrBaovRrHiyYKHlRhFgt0GKQ1lIS3yoIui2JNuWg8E1xXYS5DxZJTWfHFzqoeqpbnaqUEiixXbzq7PiqmpSe_Srjs2vlHJTcGsy5dD0Gt7W3shjutp4eB0xvT7gbbtiemimZm2bY91kUUz5elHuhp2yVQIi3s-Bq7zyVp4JWhkzHZ_bnaDqYI1k0h1EcvYHf5f2US8JHsN9OMlEfmTONrFKMICfjs4wKM9PX9EIwGA"/>
+</div>
+<p class="mt-2 text-xs font-medium text-slate-600 truncate">geometry-study-A.webp</p>
+<p class="text-[10px] text-slate-500">88 KB</p>
+</div>
+<!-- Asset Card 3 -->
+<div class="group cursor-pointer">
+<div class="aspect-square bg-white border border-slate-200 overflow-hidden relative p-1 group-hover:border-slate-400 transition-colors">
+<img class="w-full h-full object-cover grayscale" data-alt="Macro photography of liquid ink swirling in water creating intricate dark organic patterns on a pale grey background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0lWIf9mys5ykOx2rABMKkMR-abx7jIxWIeMlrj_vP0v3Y2v-rlme_x6Vn1w9vgqOqI4bjYV1I61DF5uhIpLhpl0qjoZ7f1itQqY7h52K5RtVDVLBGiUF2kB69lzgdGpsc5C6MDsGu6GKZxAZbxU_Xm-n9778stN_2o3ioR5FbYRRmx0Z1Dxr2-h1ZWokpxgI_zP9Iyruer8NkHViHF3nRxpsQ90hQTR1aoihHEPgVx5y346Y0GPrmOBY37laXdXzs08fsUUh1lgo"/>
+</div>
+<p class="mt-2 text-xs font-medium text-slate-600 truncate">ink-flow-macro.jpg</p>
+<p class="text-[10px] text-slate-500">2.1 MB</p>
+</div>
+<!-- Asset Card 4 -->
+<div class="group cursor-pointer">
+<div class="aspect-square bg-white border border-slate-200 overflow-hidden relative p-1 group-hover:border-slate-400 transition-colors">
+<img class="w-full h-full object-cover grayscale" data-alt="Architectural detail of concrete brutalist building with strong diagonal shadows and textured surface grain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCLYnXTteVNH-a5LcQhcc7DDGMN5_mTHD2w0Pn1cr4D_WKDd9ArfoufAj5X5OotHrqd-OVq-6cn11C_C9QHOAH3bDMh-iJCiwoJUpLTUvh_e1_AQBtD05pJLgvhPXRWfnNkO5e6qJLRboV42EpkTiPoAUKiw6HJru0ZarB6u6bRrTA4rgEKyYfUOS5ob7M2zT4K0u-LWpm-mPmgxgwrmypqEGm20agkQEFzDWLRGcBDfV4bZ-yPlW6HwOb7zQvLv7bqZ0zRXt41-8"/>
+</div>
+<p class="mt-2 text-xs font-medium text-slate-600 truncate">brutalist-grid.webp</p>
+<p class="text-[10px] text-slate-500">456 KB</p>
+</div>
+<!-- Asset Card 5 -->
+<div class="group cursor-pointer">
+<div class="aspect-square bg-white border border-slate-200 overflow-hidden relative p-1 group-hover:border-slate-400 transition-colors text-slate-400 flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl">description</span>
+</div>
+<p class="mt-2 text-xs font-medium text-slate-600 truncate">q3-report-draft.pdf</p>
+<p class="text-[10px] text-slate-500">1.2 MB</p>
+</div>
+<!-- Asset Card 6 -->
+<div class="group cursor-pointer">
+<div class="aspect-square bg-white border border-slate-200 overflow-hidden relative p-1 group-hover:border-slate-400 transition-colors">
+<img class="w-full h-full object-cover grayscale" data-alt="3D wave displacement map rendered in matte black material with top-down lighting creating high contrast ripples" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7tTA0lJH4MjJ3yNejHkPfjB5it5-WoCQXvCyiLBbYswDCUBEK0TB87vxMBhjJApLhqMAzIEEJo55xqOJAdd0QVuS8IRSN-8HaOP2eX0fJfLVoDOeHZg5NzqptgtGKVWhx5hB_tDsTDtYmAZ9NIIc1Oj7hVEkoi9OW7eq0WYa1bh8cuZSYH8LH0tLa0tLE_rbeoF2oMRbBu3CjyBLK5RgrI1GqDX-vd-RPKq0ptuKhnvh0Fq7F8mAHkWvPr22ec9vFsO7EQnLWVyg"/>
+</div>
+<p class="mt-2 text-xs font-medium text-slate-600 truncate">topography-v2.png</p>
+<p class="text-[10px] text-slate-500">312 KB</p>
+</div>
+<!-- Asset Card 7 -->
+<div class="group cursor-pointer">
+<div class="aspect-square bg-white border border-slate-200 overflow-hidden relative p-1 group-hover:border-slate-400 transition-colors">
+<img class="w-full h-full object-cover grayscale" data-alt="Soft ethereal gradient of monochromatic greys resembling early morning mist over a calm lake surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHEsLNM3ATwePpHHjsNJynbZhb_fMM_J8NBZUsE_d0FMPBsGobAKlxEF4ucNubV0UcDKJF65ucEVdxivdTeAj1jq8XKTDYChKzjwun08qNWJIuFq-OpMSIl0KRWmyvUv6-j8cnbUx19PtgTvAGzOPuuv7brT3nrxboC3xs4AXx-emGbhs4y5mdhzMU4NeAidHIUyd9t2Abl24aTGePbulwhH3IU0_A21FjiuV8vtBuT72_z8mr_LeON2NbuUE2Wp6PYJubQSb7EiY"/>
+</div>
+<p class="mt-2 text-xs font-medium text-slate-600 truncate">mist-gradient.jpg</p>
+<p class="text-[10px] text-slate-500">145 KB</p>
+</div>
+<!-- Asset Card 8 -->
+<div class="group cursor-pointer">
+<div class="aspect-square bg-white border border-slate-200 overflow-hidden relative p-1 group-hover:border-slate-400 transition-colors">
+<img class="w-full h-full object-cover grayscale" data-alt="Close-up of fine carbon fiber mesh pattern with subtle metallic sheen and technical texture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlXxR5TPwtIhlNT6uPG0PR4LTsiZduOLtVQsJXW-FKKqqEfMz6hpTIZBKv43jZtW0mbDscT2G9TTcTePUdtzML0BsFOPdbZUBOsuHn19rLn6xGUROizgs8wDAjCHU8cQYl-m2zBtE5hU8D1YQbUStMU2X3CQOkBQO_AOYEM_nUvmsDymVQHiGM3iWviIVfsMWJXPaeFJzKOPe3JjrgT6CMGpXIG1Ut_ktDiM54TvqgYrdXzdLEcXV3GOh3yl5gUBtuWgeX4dT5wW0"/>
+</div>
+<p class="mt-2 text-xs font-medium text-slate-600 truncate">carbon-weave.webp</p>
+<p class="text-[10px] text-slate-500">92 KB</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Selected Asset Sidebar -->
+<aside class="w-80 border-l border-slate-200 bg-white overflow-y-auto shrink-0 flex flex-col">
+<div class="p-6 border-b border-slate-100">
+<div class="flex justify-between items-center mb-6">
+<span class="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-bold">Details</span>
+<button class="text-slate-400 hover:text-slate-900 transition-colors">
+<span class="material-symbols-outlined text-lg">close</span>
+</button>
+</div>
+<!-- Preview -->
+<div class="aspect-video bg-surface-container-low rounded-lg overflow-hidden border border-slate-200 mb-6">
+<img class="w-full h-full object-cover" data-alt="Enlarged view of abstract 3D render showing flowing silk-like dark grey surfaces with intense directional light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUkbu2w_emo1lJ-dd-gWBMp279GD-YRbi7dosH-J6KF8p-oUf3-vcx2ZilL2IGM23xb6XVW_2DES0SMTuWDsJgD-mPM7zU-Gx7BI0EWX5Hm8_3csgjlGetEnE-aBdB4Tb3yuG8Bag1exLlI3zXPlNbqt5kWj28e48xx9wrXckMssJLhu5yorFRWmuJaxnEwt1ny1wpolspdNDAHp7wnW9F1xO8DLeaoaCOi35X6_U_wvHm2HnysH2jevRkVXHzBl1m3Ge_-QBvLgE"/>
+</div>
+<!-- Meta Data -->
+<div class="space-y-4 mb-8">
+<div>
+<p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-1">File Name</p>
+<p class="text-sm font-medium text-slate-900">texture-void-01.webp</p>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-1">Type</p>
+<p class="text-sm font-medium text-slate-700">WEBP</p>
+</div>
+<div>
+<p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-1">Size</p>
+<p class="text-sm font-medium text-slate-700">124 KB</p>
+</div>
+<div>
+<p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-1">Dimensions</p>
+<p class="text-sm font-medium text-slate-700">1200 x 800 px</p>
+</div>
+<div>
+<p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-1">Uploaded</p>
+<p class="text-sm font-medium text-slate-700">Oct 12, 2023</p>
+</div>
+</div>
+</div>
+<!-- Actions -->
+<div class="space-y-6">
+<div>
+<label class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-2 block">Alternative Text</label>
+<textarea class="w-full text-sm border-0 border-b border-outline-variant focus:border-primary focus:ring-0 p-0 pb-2 resize-none bg-transparent placeholder-slate-300" placeholder="Describe this image for accessibility..." rows="3">Abstract flowing dark grey textures with dramatic shadows.</textarea>
+</div>
+<div class="flex flex-col gap-3">
+<button class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs font-semibold rounded-lg flex items-center justify-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-sm">content_copy</span>
+                                Copy Public URL
+                            </button>
+<button class="w-full py-2.5 text-error hover:bg-error/5 text-xs font-semibold rounded-lg flex items-center justify-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-sm">delete</span>
+                                Delete Permanently
+                            </button>
+</div>
+</div>
+</div>
+<!-- Usage Section -->
+<div class="p-6">
+<p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-3">Appears In</p>
+<div class="space-y-3">
+<a class="flex items-center gap-3 group" href="#">
+<div class="w-10 h-10 rounded bg-slate-50 flex items-center justify-center shrink-0 border border-slate-100">
+<span class="material-symbols-outlined text-slate-400 text-sm">description</span>
+</div>
+<div>
+<p class="text-xs font-medium text-slate-700 group-hover:text-primary transition-colors">The Future of Minimalist Design</p>
+<p class="text-[10px] text-slate-400">Main Hero Image</p>
+</div>
+</a>
+<a class="flex items-center gap-3 group" href="#">
+<div class="w-10 h-10 rounded bg-slate-50 flex items-center justify-center shrink-0 border border-slate-100">
+<span class="material-symbols-outlined text-slate-400 text-sm">description</span>
+</div>
+<div>
+<p class="text-xs font-medium text-slate-700 group-hover:text-primary transition-colors">Monochromatic Workspaces</p>
+<p class="text-[10px] text-slate-400">Gallery Inset</p>
+</div>
+</a>
+</div>
+</div>
+</aside>
+</main>
+</div>
+</body></html>
