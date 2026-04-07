@@ -46,8 +46,8 @@ const values = actionResult?.data && !actionResult.data.ok ? actionResult.data.v
         <div class="grid w-full gap-8 lg:grid-cols-[1fr_24rem]">
         <section class="admin-panel flex min-h-[32rem] flex-col justify-between">
           <div>
-            <p class="eyebrow">Midnight Inkwell</p>
-            <h1 class="mt-4 max-w-2xl font-serif text-6xl italic tracking-tight">Run the publication with calm, precise control.</h1>
+            <p class="eyebrow">{settings.siteTitle}</p>
+            <h1 class="mt-4 max-w-2xl font-serif text-5xl italic tracking-tight sm:text-6xl">Run {settings.siteTitle} with calm, precise control.</h1>
             <p class="mt-6 max-w-xl text-lg leading-8 text-[color:var(--page-muted)]">
               The admin panel follows the same editorial direction as the public site, but the interaction model is tuned for operational work.
             </p>

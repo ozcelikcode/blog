@@ -30,7 +30,7 @@ const { jsonLd, metadata, settings } = Astro.props;
       Skip to content
     </a>
     <div class="flex min-h-screen flex-col">
-      <SiteHeader />
+      <SiteHeader siteTitle={settings.siteTitle} />
       <main class="flex-1" id="content">
         <slot />
       </main>

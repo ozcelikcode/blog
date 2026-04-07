@@ -17,7 +17,9 @@ test("tags CRUD basic flow works", async ({ page }) => {
   await page.getByRole("button", { name: "Create Tag" }).click();
 
   await expect(page).toHaveURL("/admin/tags");
-  await expect(page.getByText(initialName)).toBeVisible();
+  await expect(
+    page.locator("tr").filter({ hasText: initialName }).getByRole("cell", { name: initialName }),
+  ).toBeVisible();
 
   const initialRow = page.locator("tr").filter({ hasText: initialName });
   await initialRow.getByRole("link", { name: "Edit" }).click();
@@ -26,7 +28,9 @@ test("tags CRUD basic flow works", async ({ page }) => {
   await page.getByRole("button", { name: "Save Tag" }).click();
 
   await expect(page).toHaveURL("/admin/tags");
-  await expect(page.getByText(updatedName)).toBeVisible();
+  await expect(
+    page.locator("tr").filter({ hasText: updatedName }).getByRole("cell", { name: updatedName }),
+  ).toBeVisible();
 
   const row = page.locator("tr").filter({ hasText: updatedName });
   page.once("dialog", async (dialog) => dialog.accept());
@@ -36,14 +40,21 @@ test("tags CRUD basic flow works", async ({ page }) => {
 
 test("settings update works", async ({ page }) => {
   const uniqueSuffix = Date.now().toString(36);
+  const nextTitle = `Editorial Signal ${uniqueSuffix}`;
   const nextDescription = `Updated site description ${uniqueSuffix}`;
 
   await loginAsAdmin(page);
   await page.goto("/admin/settings");
 
+  await page.getByLabel("Site title").fill(nextTitle);
   await page.getByLabel("Site description").fill(nextDescription);
   await page.getByRole("button", { name: "Save Settings" }).click();
 
   await expect(page).toHaveURL("/admin/settings");
+  await expect(page.getByText(nextTitle, { exact: true }).first()).toBeVisible();
   await expect(page.getByLabel("Site description")).toHaveValue(nextDescription);
+  await page.goto("/");
+  await expect(page.getByRole("link", { name: nextTitle })).toBeVisible();
+  await page.goto("/admin");
+  await expect(page.getByRole("link", { name: nextTitle })).toBeVisible();
 });

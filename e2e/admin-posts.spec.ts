@@ -34,7 +34,9 @@ test("create, edit, and publish post works", async ({ page }) => {
 
   await page.goto("/admin/posts");
   await expect(page.getByRole("link", { name: publishedTitle })).toBeVisible();
-  await expect(page.getByText(publishedSlug)).toBeVisible();
+  await expect(
+    page.locator("tr").filter({ hasText: publishedTitle }).getByText(publishedSlug, { exact: true }),
+  ).toBeVisible();
 
   await page.goto(`/blog/${publishedSlug}`);
   await expect(page.getByRole("heading", { name: publishedTitle })).toBeVisible();

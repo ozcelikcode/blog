@@ -115,7 +115,7 @@
 
 @layer components {
   .surface-card {
-    @apply rounded-3xl border p-6 shadow-sm;
+    @apply min-w-0 rounded-3xl border p-6 shadow-sm;
     background: color-mix(in srgb, var(--page-card) 86%, transparent);
     border-color: color-mix(in srgb, var(--page-border) 78%, transparent);
     box-shadow: 0 20px 60px -40px color-mix(in srgb, var(--page-fg) 25%, transparent);
@@ -184,7 +184,7 @@
   }
 
   .article-body pre {
-    @apply overflow-x-auto rounded-2xl border p-5 text-sm leading-7;
+    @apply max-w-full overflow-x-auto rounded-2xl border p-5 text-sm leading-7;
     background: color-mix(in srgb, var(--page-card) 92%, black 4%);
     border-color: color-mix(in srgb, var(--page-border) 90%, transparent);
   }
@@ -237,7 +237,7 @@
   }
 
   .admin-shell {
-    @apply min-h-screen;
+    @apply min-h-screen overflow-x-hidden;
     background:
       radial-gradient(circle at top left, color-mix(in srgb, var(--page-accent) 16%, transparent), transparent 32%),
       linear-gradient(180deg, color-mix(in srgb, var(--admin-elevated) 84%, transparent), var(--page-bg));
@@ -245,7 +245,7 @@
   }
 
   .admin-panel {
-    @apply rounded-3xl border p-6 shadow-sm;
+    @apply min-w-0 rounded-3xl border p-6 shadow-sm;
     background: color-mix(in srgb, var(--page-card) 94%, transparent);
     border-color: color-mix(in srgb, var(--page-border) 92%, transparent);
     box-shadow: 0 30px 80px -50px color-mix(in srgb, var(--page-accent) 20%, transparent);
@@ -341,8 +341,12 @@
     background: color-mix(in srgb, var(--page-card) 55%, transparent);
   }
 
+  .admin-rich-text-editor {
+    min-width: 0;
+  }
+
   .admin-rich-text-editor .toastui-editor-defaultUI {
-    @apply overflow-hidden rounded-[1.75rem] border;
+    @apply min-w-0 overflow-hidden rounded-[1.75rem] border;
     background: color-mix(in srgb, var(--page-card) 94%, transparent);
     border-color: color-mix(in srgb, var(--page-border) 92%, transparent);
   }
@@ -351,6 +355,22 @@
   .admin-rich-text-editor .toastui-editor-mode-switch {
     background: color-mix(in srgb, var(--admin-elevated) 84%, transparent);
     border-color: color-mix(in srgb, var(--page-border) 88%, transparent);
+  }
+
+  .admin-rich-text-editor .toastui-editor-defaultUI-toolbar,
+  .admin-rich-text-editor .toastui-editor-mode-switch {
+    overflow-x: auto;
+  }
+
+  .admin-rich-text-editor .toastui-editor-toolbar {
+    display: flex;
+    flex-wrap: nowrap;
+    min-width: 100%;
+    width: max-content;
+  }
+
+  .admin-rich-text-editor .toastui-editor-toolbar-group {
+    flex-shrink: 0;
   }
 
   .admin-rich-text-editor .toastui-editor-toolbar-icons,
@@ -375,7 +395,12 @@
   .admin-rich-text-editor .toastui-editor-ww-container,
   .admin-rich-text-editor .ProseMirror,
   .admin-rich-text-editor .toastui-editor-md-preview {
+    max-width: 100%;
     background: transparent;
+  }
+
+  .admin-rich-text-editor .toastui-editor-main {
+    min-width: 0;
   }
 
   .admin-rich-text-editor .toastui-editor-md-tab-container,

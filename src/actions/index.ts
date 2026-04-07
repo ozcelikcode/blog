@@ -99,7 +99,17 @@ export const server = {
             return { formError: "Authentication required.", ok: false, values: { altText: "" } };
           }
 
-          return uploadAdminMedia(formData, actor, context);
+          try {
+            return uploadAdminMedia(formData, actor, context);
+          } catch {
+            return {
+              formError: "Media upload failed. Try a different image or try again.",
+              ok: false,
+              values: {
+                altText: String(formData.get("altText") ?? ""),
+              },
+            };
+          }
         },
       }),
     },
@@ -160,7 +170,27 @@ export const server = {
             };
           }
 
-          return saveAdminSettings(formData, actor, context);
+          try {
+            return saveAdminSettings(formData, actor, context);
+          } catch {
+            return {
+              formError: "Settings could not be saved. Try again.",
+              ok: false,
+              values: {
+                defaultOgImageUrl: String(formData.get("defaultOgImageUrl") ?? ""),
+                defaultSeoDescription: String(formData.get("defaultSeoDescription") ?? ""),
+                defaultSeoTitleTemplate: String(formData.get("defaultSeoTitleTemplate") ?? ""),
+                homepageHeroBody: String(formData.get("homepageHeroBody") ?? ""),
+                homepageHeroTitle: String(formData.get("homepageHeroTitle") ?? ""),
+                newsletterDescription: String(formData.get("newsletterDescription") ?? ""),
+                newsletterHeading: String(formData.get("newsletterHeading") ?? ""),
+                siteDescription: String(formData.get("siteDescription") ?? ""),
+                siteTitle: String(formData.get("siteTitle") ?? ""),
+                siteUrl: String(formData.get("siteUrl") ?? ""),
+                twitterHandle: String(formData.get("twitterHandle") ?? ""),
+              },
+            };
+          }
         },
       }),
     },

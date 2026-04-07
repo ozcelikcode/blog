@@ -5,6 +5,7 @@ import { getCurrentIsoTimestamp } from "@/lib/utils/dates";
 import { assertCanDeleteRecords } from "@/lib/auth/session";
 import { setFlashMessage } from "@/lib/sessions/flash";
 import type { AdminSessionUser } from "@/features/admin/types";
+import { listAdminMediaAssets } from "@/features/admin/media/repositories/admin-media-repository";
 import type { AdminFormState } from "@/features/admin/utils/form-state";
 import { recordAdminActivity } from "@/features/admin/activity/services/activity-service";
 
@@ -36,6 +37,12 @@ export interface AdminPostsPageData {
 
 export interface AdminPostEditorPageData {
   authors: ReturnType<typeof listAdminAuthorOptions>;
+  mediaAssets: Array<{
+    altText: string | null;
+    fileName: string;
+    id: number;
+    publicUrl: string;
+  }>;
   post: {
     authorId: string;
     canonicalUrl: string;
@@ -233,6 +240,15 @@ export function getAdminPostEditorPageData(
 
   return {
     authors,
+    mediaAssets: listAdminMediaAssets({
+      limit: 12,
+      offset: 0,
+    }).map((asset) => ({
+      altText: asset.altText,
+      fileName: asset.fileName,
+      id: asset.id,
+      publicUrl: asset.publicUrl,
+    })),
     post: post
       ? toEditorValues(post)
       : {

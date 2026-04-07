@@ -16,8 +16,8 @@ const {
 } = Astro.props;
 ---
 
-<div class="admin-rich-text-editor" data-wysiwyg-editor>
-  <div class="min-h-[42rem]" data-wysiwyg-root></div>
+<div class="admin-rich-text-editor w-full max-w-full min-w-0" data-wysiwyg-editor>
+  <div class="min-h-[42rem] w-full max-w-full min-w-0 overflow-hidden" data-wysiwyg-root></div>
   <textarea hidden data-markdown-input data-markdown-source id={inputId} name={name} placeholder={placeholder}>{value}</textarea>
 </div>
 

@@ -6,6 +6,7 @@ import type { AdminPostEditorPageData } from "@/features/admin/posts/services/ad
 
 interface Props {
   action: string;
+  mediaAssets: AdminPostEditorPageData["mediaAssets"];
   fieldErrors?: Record<string, string>;
   formError?: string;
   post: AdminPostEditorPageData["post"];
@@ -13,14 +14,14 @@ interface Props {
   authors: AdminPostEditorPageData["authors"];
 }
 
-const { action, authors, fieldErrors = {}, formError, post, tags } = Astro.props;
+const { action, authors, fieldErrors = {}, formError, mediaAssets, post, tags } = Astro.props;
 ---
 
 <form action={action} class="space-y-8" method="post">
   {post.postId && <input name="postId" type="hidden" value={post.postId} />}
 
-  <div class="grid gap-8 xl:grid-cols-[minmax(0,1.4fr)_22rem]">
-    <div class="space-y-6">
+  <div class="grid min-w-0 gap-8 xl:grid-cols-[minmax(0,1.4fr)_22rem]">
+    <div class="min-w-0 space-y-6">
       <div class="admin-panel">
         <label class="admin-label" for="title">Title</label>
         <input class="admin-input text-3xl font-serif italic" id="title" name="title" placeholder="Enter post title" value={post.title} />
@@ -94,10 +95,32 @@ const { action, authors, fieldErrors = {}, formError, post, tags } = Astro.props
           <textarea class="admin-textarea min-h-24" name="seoDescription">{post.seoDescription}</textarea>
           <AdminFieldError message={fieldErrors.seoDescription} />
         </label>
+
+        <div class="mt-6 grid gap-4 xl:grid-cols-[minmax(0,1fr)_20rem]">
+          <div class="rounded-2xl border border-[color:var(--page-border)] px-4 py-4">
+            <p class="text-sm font-medium text-[color:var(--page-accent)]" data-seo-preview-title>{post.seoTitle || post.title || "Post title"}</p>
+            <p class="mt-1 text-xs text-[color:var(--page-muted)]" data-seo-preview-url>{post.canonicalUrl || `/blog/${post.slug || "post-slug"}`}</p>
+            <p class="mt-2 text-sm text-[color:var(--page-muted)]" data-seo-preview-description>{post.seoDescription || post.excerpt || "Search preview description."}</p>
+          </div>
+
+          <div class="overflow-hidden rounded-2xl border border-[color:var(--page-border)]">
+            <img
+              alt=""
+              class:list={["aspect-[1.91/1] w-full object-cover", !post.coverImageUrl && "hidden"]}
+              data-seo-preview-image
+              src={post.coverImageUrl || undefined}
+            />
+            <div class="space-y-2 px-4 py-4">
+              <p class="text-xs uppercase tracking-[0.16em] text-[color:var(--page-muted)]">Social preview</p>
+              <p class="font-medium" data-seo-preview-card-title>{post.seoTitle || post.title || "Post title"}</p>
+              <p class="text-sm text-[color:var(--page-muted)]" data-seo-preview-card-description>{post.seoDescription || post.excerpt || "Social description."}</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <aside class="space-y-6">
+    <aside class="min-w-0 space-y-6">
       <div class="admin-panel">
         <h2 class="font-serif text-2xl italic">Publishing</h2>
 
@@ -133,9 +156,40 @@ const { action, authors, fieldErrors = {}, formError, post, tags } = Astro.props
 
         <label class="mt-6 block">
           <span class="admin-label">Cover Image URL</span>
-          <input class="admin-input" name="coverImageUrl" placeholder="/uploads/media/example.webp" value={post.coverImageUrl} />
+          <input class="admin-input" data-cover-image-input name="coverImageUrl" placeholder="/uploads/media/example.webp" value={post.coverImageUrl} />
           <AdminFieldError message={fieldErrors.coverImageUrl} />
         </label>
+
+        <div class="mt-6 space-y-4">
+          <div class="flex items-center justify-between gap-4">
+            <p class="admin-label !mb-0">Recent media</p>
+            <a class="admin-button-secondary" href="/admin/media">Open Library</a>
+          </div>
+
+          <img
+            alt=""
+            class:list={[
+              "aspect-[4/3] w-full rounded-2xl border border-[color:var(--page-border)] object-cover",
+              !post.coverImageUrl && "hidden",
+            ]}
+            data-cover-image-preview
+            src={post.coverImageUrl || undefined}
+          />
+
+          <div class="grid gap-3 sm:grid-cols-2">
+            {mediaAssets.map((asset) => (
+              <button
+                class="rounded-2xl border border-[color:var(--page-border)] p-2 text-left transition-colors hover:border-[color:var(--page-accent)]"
+                data-cover-image-picker={asset.publicUrl}
+                type="button"
+              >
+                <img alt={asset.altText ?? ""} class="aspect-[4/3] w-full rounded-xl object-cover" src={asset.publicUrl} />
+                <span class="mt-2 block truncate text-sm font-medium">{asset.fileName}</span>
+                <span class="mt-1 block text-xs text-[color:var(--page-muted)]">{asset.altText || "Use as cover image"}</span>
+              </button>
+            ))}
+          </div>
+        </div>
 
         <fieldset class="mt-6">
           <legend class="admin-label">Tags</legend>
@@ -167,6 +221,18 @@ const { action, authors, fieldErrors = {}, formError, post, tags } = Astro.props
   const form = document.currentScript?.previousElementSibling;
   const titleInput = form?.querySelector("#title");
   const slugInput = form?.querySelector("[data-slug-input]");
+  const coverImageInput = form?.querySelector("[data-cover-image-input]");
+  const coverImagePreview = form?.querySelector("[data-cover-image-preview]");
+  const excerptInput = form?.querySelector('[name="excerpt"]');
+  const seoTitleInput = form?.querySelector('[name="seoTitle"]');
+  const seoDescriptionInput = form?.querySelector('[name="seoDescription"]');
+  const canonicalUrlInput = form?.querySelector('[name="canonicalUrl"]');
+  const seoPreviewTitle = form?.querySelector("[data-seo-preview-title]");
+  const seoPreviewUrl = form?.querySelector("[data-seo-preview-url]");
+  const seoPreviewDescription = form?.querySelector("[data-seo-preview-description]");
+  const seoPreviewImage = form?.querySelector("[data-seo-preview-image]");
+  const seoPreviewCardTitle = form?.querySelector("[data-seo-preview-card-title]");
+  const seoPreviewCardDescription = form?.querySelector("[data-seo-preview-card-description]");
   let formDirty = false;
   let autoSlug = !(slugInput instanceof HTMLInputElement) || slugInput.value.trim().length === 0;
 
@@ -197,6 +263,77 @@ const { action, authors, fieldErrors = {}, formError, post, tags } = Astro.props
   form?.addEventListener("submit", () => {
     formDirty = false;
   });
+
+  const syncCoverImagePreview = () => {
+    if (!(coverImageInput instanceof HTMLInputElement) || !(coverImagePreview instanceof HTMLImageElement)) {
+      return;
+    }
+
+    const nextValue = coverImageInput.value.trim();
+    if (!nextValue) {
+      coverImagePreview.style.display = "none";
+      coverImagePreview.removeAttribute("src");
+      return;
+    }
+
+    coverImagePreview.style.display = "block";
+    coverImagePreview.src = nextValue;
+  };
+
+  const syncSeoPreview = () => {
+    const titleValue =
+      seoTitleInput instanceof HTMLInputElement && seoTitleInput.value.trim()
+        ? seoTitleInput.value.trim()
+        : titleInput instanceof HTMLInputElement && titleInput.value.trim()
+          ? titleInput.value.trim()
+          : "Post title";
+    const descriptionValue =
+      seoDescriptionInput instanceof HTMLTextAreaElement && seoDescriptionInput.value.trim()
+        ? seoDescriptionInput.value.trim()
+        : excerptInput instanceof HTMLTextAreaElement && excerptInput.value.trim()
+          ? excerptInput.value.trim()
+          : "Search preview description.";
+    const urlValue =
+      canonicalUrlInput instanceof HTMLInputElement && canonicalUrlInput.value.trim()
+        ? canonicalUrlInput.value.trim()
+        : slugInput instanceof HTMLInputElement && slugInput.value.trim()
+          ? `/blog/${slugInput.value.trim()}`
+          : "/blog/post-slug";
+
+    if (seoPreviewTitle instanceof HTMLElement) seoPreviewTitle.textContent = titleValue;
+    if (seoPreviewCardTitle instanceof HTMLElement) seoPreviewCardTitle.textContent = titleValue;
+    if (seoPreviewDescription instanceof HTMLElement) seoPreviewDescription.textContent = descriptionValue;
+    if (seoPreviewCardDescription instanceof HTMLElement) seoPreviewCardDescription.textContent = descriptionValue;
+    if (seoPreviewUrl instanceof HTMLElement) seoPreviewUrl.textContent = urlValue;
+
+    if (seoPreviewImage instanceof HTMLImageElement && coverImageInput instanceof HTMLInputElement) {
+      const nextValue = coverImageInput.value.trim();
+      if (!nextValue) {
+        seoPreviewImage.style.display = "none";
+        seoPreviewImage.removeAttribute("src");
+      } else {
+        seoPreviewImage.style.display = "block";
+        seoPreviewImage.src = nextValue;
+      }
+    }
+  };
+
+  coverImageInput?.addEventListener("input", syncCoverImagePreview);
+  form?.querySelectorAll("[data-cover-image-picker]").forEach((button) => {
+    button.addEventListener("click", () => {
+      if (!(button instanceof HTMLElement) || !(coverImageInput instanceof HTMLInputElement)) {
+        return;
+      }
+
+      coverImageInput.value = button.dataset.coverImagePicker ?? "";
+      coverImageInput.dispatchEvent(new Event("input", { bubbles: true }));
+      coverImageInput.focus();
+    });
+  });
+
+  syncCoverImagePreview();
+  form?.addEventListener("input", syncSeoPreview);
+  syncSeoPreview();
 
   window.addEventListener("beforeunload", (event) => {
     if (!formDirty) return;

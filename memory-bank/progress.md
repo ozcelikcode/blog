@@ -9,6 +9,11 @@
 - Admin auth, protected layout, posts, tags, authors, subscribers, media, settings, and activity modules implemented
 - Global theme persistence now applies consistently across public and admin pages
 - Admin posts now expose explicit edit actions, preselect the logged-in admin author, and use a WYSIWYG editor while storing Markdown
+- Site settings now drive public header branding, admin branding, and admin login branding
+- Admin settings include live previews and now surface form-level save errors correctly
+- Media uploads now surface form-level errors correctly and the post editor can reuse recent uploaded media assets for cover selection
+- Admin command palette now exposes dynamic navigation across navigation links, posts, tags, authors, and media
+- Responsive behavior is verified with Playwright on mobile viewport widths and supported by layout/editor overflow fixes
 - README and local setup instructions updated
 - `admin-frontend` removed after the Astro admin implementation was completed
 

@@ -41,13 +41,22 @@ const page = parseAdminPageQuery(Astro.url.searchParams);
 const query = Astro.url.searchParams.get("q") ?? "";
 const selectedAssetId = parseOptionalPositiveIntParam(
   Astro.url.searchParams.get("asset") ??
-    (updateResult?.data && !updateResult.data.ok ? updateResult.data.values.mediaAssetId : undefined),
+    (updateResult?.data && !updateResult.data.ok ? updateResult.data.values.mediaAssetId : undefined) ??
+    (deleteResult?.data && !deleteResult.data.ok
+      ? Astro.url.searchParams.get("asset") ?? undefined
+      : undefined),
 );
 const data = getAdminMediaPageData({
   assetId: selectedAssetId,
   page,
   query,
 });
+const uploadFormError =
+  uploadResult?.data && !uploadResult.data.ok ? uploadResult.data.formError : uploadResult?.error?.message;
+const updateFormError =
+  updateResult?.data && !updateResult.data.ok ? updateResult.data.formError : updateResult?.error?.message;
+const deleteFormError =
+  deleteResult?.data && !deleteResult.data.ok ? deleteResult.data.formError : deleteResult?.error?.message;
 const selectedAssetForm = data.selectedAsset
   ? {
       altText:
@@ -75,6 +84,7 @@ const selectedAssetForm = data.selectedAsset
           <label class="block">
             <span class="admin-label">Image file</span>
             <input accept="image/gif,image/jpeg,image/png,image/svg+xml,image/webp" class="admin-input file:mr-4 file:rounded-full file:border-0 file:bg-[color:var(--page-accent)] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white" name="file" type="file" />
+            <p class="admin-help">Supports GIF, JPEG, PNG, SVG, and WEBP up to 5 MB.</p>
           </label>
 
           <label class="block">
@@ -82,9 +92,9 @@ const selectedAssetForm = data.selectedAsset
             <textarea class="admin-textarea min-h-28" name="altText">{uploadResult?.data && !uploadResult.data.ok ? uploadResult.data.values.altText : ""}</textarea>
           </label>
 
-          {uploadResult?.data && !uploadResult.data.ok && uploadResult.data.formError && (
+          {uploadFormError && (
             <div class="rounded-2xl border border-[color:color-mix(in_srgb,var(--admin-danger)_40%,transparent)] px-4 py-3 text-sm text-[color:var(--admin-danger)]">
-              {uploadResult.data.formError}
+              {uploadFormError}
             </div>
           )}
 
@@ -134,9 +144,9 @@ const selectedAssetForm = data.selectedAsset
               <textarea class="admin-textarea min-h-28" name="altText">{selectedAssetForm.altText}</textarea>
             </label>
 
-            {updateResult?.data && !updateResult.data.ok && updateResult.data.formError && (
+            {updateFormError && (
               <div class="rounded-2xl border border-[color:color-mix(in_srgb,var(--admin-danger)_40%,transparent)] px-4 py-3 text-sm text-[color:var(--admin-danger)]">
-                {updateResult.data.formError}
+                {updateFormError}
               </div>
             )}
 
@@ -163,9 +173,9 @@ const selectedAssetForm = data.selectedAsset
             <button class="admin-button-danger w-full" type="submit">Delete Asset</button>
           </form>
 
-          {deleteResult?.data && !deleteResult.data.ok && deleteResult.data.formError && (
+          {deleteFormError && (
             <div class="mt-5 rounded-2xl border border-[color:color-mix(in_srgb,var(--admin-danger)_40%,transparent)] px-4 py-3 text-sm text-[color:var(--admin-danger)]">
-              {deleteResult.data.formError}
+              {deleteFormError}
             </div>
           )}
         </div>
@@ -192,7 +202,7 @@ const selectedAssetForm = data.selectedAsset
                 <div>
                   <p class="truncate font-medium">{asset.fileName}</p>
                   <p class="mt-1 text-xs uppercase tracking-[0.18em] text-[color:var(--page-muted)]">
-                    {asset.mimeType} · {formatBytes(asset.fileSizeBytes)}
+                    {asset.mimeType} | {formatBytes(asset.fileSizeBytes)}
                   </p>
                   <p class="mt-3 text-sm text-[color:var(--page-muted)]">{asset.altText || "No alt text"}</p>
                 </div>
@@ -213,5 +223,4 @@ const selectedAssetForm = data.selectedAsset
       )}
     </section>
   </div>
-
 </AdminLayout>

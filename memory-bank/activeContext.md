@@ -8,11 +8,14 @@ The repo now contains a complete Astro SSR blog plus a production-style admin pa
 - CRUD flows for posts, tags, and authors
 - a shared light/dark theme toggle that now applies across public and admin surfaces
 - subscriber listing and CSV export
-- media upload and metadata management
-- site settings editing
+- media upload and metadata management with action-level error handling
+- site settings editing with live previews for brand, search, and social metadata
 - a Toast UI WYSIWYG editor that keeps Markdown as the canonical stored post body
+- a dynamic admin command palette that surfaces posts, tags, authors, media, and settings navigation
+- a post editor media picker for selecting recent uploaded assets as cover images
 - activity/audit logging
 - updated schema, migration, seed data, and automated coverage
+- responsive admin and public layouts verified by Playwright at mobile viewport widths
 
 ## Recent Decisions
 
@@ -22,6 +25,8 @@ The repo now contains a complete Astro SSR blog plus a production-style admin pa
 - Chose simple SQL search and explicit audit records over heavier infrastructure
 - Linked `admin_users` to `authors` so the logged-in admin can be preselected as post author
 - Removed the temporary `admin-frontend` design source after adapting the UI into the Astro app
+- Moved public and admin brand labels to `site_settings.siteTitle` so settings changes propagate consistently
+- Added explicit UI feedback paths for failed media uploads and failed settings saves instead of silent refresh behavior
 
 ## Immediate Next Steps
 

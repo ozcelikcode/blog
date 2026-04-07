@@ -37,6 +37,7 @@ const postState =
     authors={data.authors}
     fieldErrors={saveResult?.data && !saveResult.data.ok ? saveResult.data.fieldErrors : undefined}
     formError={saveResult?.data && !saveResult.data.ok ? saveResult.data.formError : undefined}
+    mediaAssets={data.mediaAssets}
     post={postState}
     tags={data.tags}
   />

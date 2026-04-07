@@ -15,7 +15,8 @@
 2. Service layer composes page data or mutation behavior
 3. Repository layer performs SQL and persistence work
 4. Components render typed view models or forms
-5. Admin mutations record activity and set session-backed flash state when appropriate
+5. Astro Actions wrap admin mutations and normalize success or form-level failure payloads
+6. Admin mutations record activity and set session-backed flash state when appropriate
 
 ## Persistence Pattern
 
@@ -32,4 +33,11 @@
 - Public post pages render sanitized HTML on the server
 - Admin post editing now uses a Toast UI WYSIWYG editor while syncing Markdown into the submitted form payload
 - Theme state is initialized in the document head and shared across public and admin layouts via the same local preference key
-- Client-side JavaScript is limited to narrow admin affordances such as the editor bridge, unsaved-change warning, theme toggling, and command palette toggling
+- Public and admin shell branding read from `site_settings` instead of hardcoded labels
+- Client-side JavaScript is limited to narrow admin affordances such as the editor bridge, unsaved-change warning, theme toggling, command palette toggling, and preview syncing for settings/post SEO cards
+
+## Admin UX Pattern
+
+- The command palette is data-driven from admin services rather than hardcoded route lists
+- Media management stays intentionally lightweight: uploaded files live under `public/uploads/media`, metadata lives in SQLite, and current usage checks only block assets referenced by post covers
+- Responsive admin tables and editor surfaces prefer horizontal containment (`overflow-x-auto`, `min-w-0`) over separate mobile-only component forks

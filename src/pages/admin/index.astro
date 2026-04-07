@@ -45,31 +45,35 @@ const data = getAdminDashboardPageData();
         <a class="admin-button-secondary" href="/admin/posts">View All</a>
       </div>
 
-      <table class="admin-table">
-        <thead>
-          <tr>
-            <th>Post</th>
-            <th>Status</th>
-            <th>Updated</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.postSummary.recentPosts.map((post) => (
+      <div class="overflow-x-auto">
+      <div class="overflow-x-auto">
+        <table class="admin-table">
+          <thead>
             <tr>
-              <td>
-                <a class="font-medium hover:text-[color:var(--page-accent)]" href={`/admin/posts/${post.id}`}>{post.title}</a>
-                <p class="mt-1 text-xs text-[color:var(--page-muted)]">{post.authorName}</p>
-              </td>
-              <td><AdminStatusBadge status={post.status} /></td>
-              <td class="text-[color:var(--page-muted)]">{formatRelativeAdminDate(post.updatedAt)}</td>
-              <td>
-                <a class="admin-button-secondary" href={`/admin/posts/${post.id}`}>Edit</a>
-              </td>
+              <th>Post</th>
+              <th>Status</th>
+              <th>Updated</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {data.postSummary.recentPosts.map((post) => (
+              <tr>
+                <td>
+                  <a class="font-medium hover:text-[color:var(--page-accent)]" href={`/admin/posts/${post.id}`}>{post.title}</a>
+                  <p class="mt-1 text-xs text-[color:var(--page-muted)]">{post.authorName}</p>
+                </td>
+                <td><AdminStatusBadge status={post.status} /></td>
+                <td class="text-[color:var(--page-muted)]">{formatRelativeAdminDate(post.updatedAt)}</td>
+                <td>
+                  <a class="admin-button-secondary" href={`/admin/posts/${post.id}`}>Edit</a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      </div>
     </div>
 
     <div class="space-y-8">

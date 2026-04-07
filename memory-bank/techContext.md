@@ -27,7 +27,7 @@
 
 - Biome
 - Vitest with coverage
-- Playwright with Chromium
+- Playwright with Chromium, including responsive viewport verification for public and admin pages
 - `tsx` for maintenance scripts
 
 ## Environment

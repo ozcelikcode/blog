@@ -38,7 +38,7 @@ const adminUser = Astro.locals.adminUser;
     <div class="grid min-h-screen lg:grid-cols-[17rem_1fr]">
       <aside class="border-r border-[color:var(--page-border)] bg-[color:var(--admin-sidebar)] px-5 py-6">
         <a class="block" href="/admin">
-          <span class="font-serif text-3xl italic tracking-tight">The Codex</span>
+          <span class="block break-words font-serif text-3xl italic tracking-tight">{settings.siteTitle}</span>
           <span class="mt-1 block text-[11px] uppercase tracking-[0.22em] text-[color:var(--page-muted)]">Admin Console</span>
         </a>
 
@@ -64,7 +64,7 @@ const adminUser = Astro.locals.adminUser;
             <form action="/admin/posts" class="w-full max-w-xl" method="get">
               <input class="admin-input" name="q" placeholder="Search posts, slugs, excerpts, authors, tags" type="search" />
             </form>
-            <div class="flex items-center gap-3">
+            <div class="flex flex-wrap items-center justify-end gap-3">
               <ThemeToggle />
               <a class="admin-button-secondary" href="/">View Site</a>
               <button class="admin-button-secondary" data-open-command type="button">Quick Nav</button>

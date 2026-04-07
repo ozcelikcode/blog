@@ -1,14 +1,20 @@
 ---
 import ThemeToggle from "./ThemeToggle.astro";
+
+interface Props {
+  siteTitle: string;
+}
+
+const { siteTitle } = Astro.props;
 ---
 
 <header class="border-b border-[color:var(--page-border)]">
-  <div class="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-5 sm:px-8">
-    <a class="font-serif text-2xl tracking-tight" href="/">
-      Developer Blog
+  <div class="mx-auto flex w-full max-w-6xl flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+    <a class="max-w-full text-center font-serif text-2xl tracking-tight sm:text-left" href="/">
+      {siteTitle}
     </a>
 
-    <nav aria-label="Primary" class="flex items-center gap-2 sm:gap-4">
+    <nav aria-label="Primary" class="flex flex-wrap items-center justify-center gap-2 sm:justify-end sm:gap-4">
       <a class="rounded-full px-3 py-2 text-sm text-[color:var(--page-muted)] hover:text-[color:var(--page-fg)]" href="/">
         Home
       </a>

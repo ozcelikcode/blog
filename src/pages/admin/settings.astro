@@ -13,6 +13,8 @@ if (saveResult?.data?.ok && saveResult.data.redirectTo) {
 
 const data = getAdminSettingsPageData();
 const settings = saveResult?.data && !saveResult.data.ok ? saveResult.data.values : data.settings;
+const formError =
+  saveResult?.data && !saveResult.data.ok ? saveResult.data.formError : saveResult?.error?.message;
 ---
 
 <AdminLayout currentPath="/admin/settings" description="Control canonical publication metadata and homepage copy." title="Settings">
@@ -22,7 +24,7 @@ const settings = saveResult?.data && !saveResult.data.ok ? saveResult.data.value
     title="Settings"
   />
 
-  <form action={actions.admin.settings.save} class="space-y-8" method="post">
+  <form action={actions.admin.settings.save} class="space-y-8" data-settings-form method="post">
     <section class="grid gap-8 xl:grid-cols-2">
       <div class="admin-panel">
         <h2 class="font-serif text-3xl italic">Site</h2>
@@ -121,9 +123,41 @@ const settings = saveResult?.data && !saveResult.data.ok ? saveResult.data.value
       </div>
     </section>
 
-    {saveResult?.data && !saveResult.data.ok && saveResult.data.formError && (
+    <section class="admin-panel">
+      <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
+        <div class="space-y-4">
+          <div>
+            <p class="admin-label">Live brand preview</p>
+            <h2 class="font-serif text-3xl italic" data-settings-preview-title>{settings.siteTitle}</h2>
+            <p class="mt-3 max-w-2xl text-sm leading-7 text-[color:var(--page-muted)]" data-settings-preview-description>{settings.siteDescription}</p>
+            <p class="mt-4 text-xs uppercase tracking-[0.18em] text-[color:var(--page-muted)]" data-settings-preview-url>{settings.siteUrl}</p>
+          </div>
+          <div class="rounded-2xl border border-[color:var(--page-border)] px-4 py-4">
+            <p class="text-sm font-medium" data-settings-search-title>{settings.siteTitle}</p>
+            <p class="mt-1 text-xs text-[color:var(--page-accent)]" data-settings-search-url>{settings.siteUrl}</p>
+            <p class="mt-2 text-sm text-[color:var(--page-muted)]" data-settings-search-description>{settings.defaultSeoDescription}</p>
+          </div>
+        </div>
+
+        <div class="rounded-[1.75rem] border border-[color:var(--page-border)] bg-[color:color-mix(in_srgb,var(--page-card)_86%,transparent)] p-4">
+          <p class="admin-label">Social card</p>
+          <div class="overflow-hidden rounded-2xl border border-[color:var(--page-border)]">
+            <div class="aspect-[1.91/1] bg-[color:color-mix(in_srgb,var(--page-accent-soft)_82%,transparent)]">
+              <img alt="" class="h-full w-full object-cover" data-settings-preview-image src={settings.defaultOgImageUrl ?? ""} />
+            </div>
+            <div class="space-y-2 px-4 py-4">
+              <p class="text-xs uppercase tracking-[0.16em] text-[color:var(--page-muted)]" data-settings-preview-handle>{settings.twitterHandle || settings.siteUrl}</p>
+              <p class="font-medium" data-settings-preview-card-title>{settings.siteTitle}</p>
+              <p class="text-sm text-[color:var(--page-muted)]" data-settings-preview-card-description>{settings.defaultSeoDescription}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {formError && (
       <div class="admin-panel border-[color:color-mix(in_srgb,var(--admin-danger)_40%,transparent)] text-sm text-[color:var(--admin-danger)]">
-        {saveResult.data.formError}
+        {formError}
       </div>
     )}
 
@@ -132,3 +166,55 @@ const settings = saveResult?.data && !saveResult.data.ok ? saveResult.data.value
     </div>
   </form>
 </AdminLayout>
+
+<script is:inline>
+  const settingsForm = document.querySelector("[data-settings-form]");
+
+  if (settingsForm instanceof HTMLFormElement) {
+    const fieldValue = (fieldName) => {
+      const field = settingsForm.elements.namedItem(fieldName);
+      return field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement ? field.value.trim() : "";
+    };
+
+    const bindText = (selector, fieldName, fallbackFieldName) => {
+      const output = document.querySelector(selector);
+      const input = settingsForm.elements.namedItem(fieldName);
+
+      if (!(output instanceof HTMLElement) || !(input instanceof HTMLInputElement || input instanceof HTMLTextAreaElement)) {
+        return;
+      }
+
+      const sync = () => {
+        const fallback = fallbackFieldName ? fieldValue(fallbackFieldName) : "";
+        output.textContent = input.value.trim() || fallback;
+      };
+
+      input.addEventListener("input", sync);
+      sync();
+    };
+
+    bindText("[data-settings-preview-title]", "siteTitle");
+    bindText("[data-settings-preview-description]", "siteDescription");
+    bindText("[data-settings-preview-url]", "siteUrl");
+    bindText("[data-settings-search-title]", "siteTitle");
+    bindText("[data-settings-search-url]", "siteUrl");
+    bindText("[data-settings-search-description]", "defaultSeoDescription");
+    bindText("[data-settings-preview-handle]", "twitterHandle", "siteUrl");
+    bindText("[data-settings-preview-card-title]", "siteTitle");
+    bindText("[data-settings-preview-card-description]", "defaultSeoDescription");
+
+    const imageOutput = document.querySelector("[data-settings-preview-image]");
+    const imageInput = settingsForm.elements.namedItem("defaultOgImageUrl");
+
+    if (imageOutput instanceof HTMLImageElement && imageInput instanceof HTMLInputElement) {
+      const syncImage = () => {
+        const nextValue = imageInput.value.trim();
+        imageOutput.src = nextValue;
+        imageOutput.style.display = nextValue ? "block" : "none";
+      };
+
+      imageInput.addEventListener("input", syncImage);
+      syncImage();
+    }
+  }
+</script>
