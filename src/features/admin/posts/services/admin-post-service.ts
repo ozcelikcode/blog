@@ -7,7 +7,6 @@ import { setFlashMessage } from "@/lib/sessions/flash";
 import type { AdminSessionUser } from "@/features/admin/types";
 import type { AdminFormState } from "@/features/admin/utils/form-state";
 import { recordAdminActivity } from "@/features/admin/activity/services/activity-service";
-import { listTagsWithPostCount } from "@/features/blog/repositories/post-repository";
 
 import {
   countAdminPosts,
@@ -371,8 +370,4 @@ export async function mutateAdminPost(
     redirectTo: `/admin/posts/${postId}`,
     values: validation.values,
   };
-}
-
-export function getTagSelectionSummary(): ReturnType<typeof listTagsWithPostCount> {
-  return listTagsWithPostCount();
 }
