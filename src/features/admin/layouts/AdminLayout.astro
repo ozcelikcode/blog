@@ -1,5 +1,7 @@
 ---
 import BaseHead from "@/components/BaseHead.astro";
+import ThemeScript from "@/components/ThemeScript.astro";
+import ThemeToggle from "@/components/ThemeToggle.astro";
 import { adminNavItems } from "@/features/admin/types";
 import AdminCommandPalette from "@/features/admin/components/AdminCommandPalette.astro";
 import AdminFlashToast from "@/features/admin/components/AdminFlashToast.astro";
@@ -26,9 +28,10 @@ const adminUser = Astro.locals.adminUser;
 ---
 
 <!doctype html>
-<html class="dark admin-root" data-theme="dark" lang="en">
+<html class="admin-root" lang="en">
   <head>
     <BaseHead metadata={metadata} />
+    <ThemeScript />
     <meta content="noindex, nofollow" name="robots" />
   </head>
   <body class="admin-shell">
@@ -62,6 +65,8 @@ const adminUser = Astro.locals.adminUser;
               <input class="admin-input" name="q" placeholder="Search posts, slugs, excerpts, authors, tags" type="search" />
             </form>
             <div class="flex items-center gap-3">
+              <ThemeToggle />
+              <a class="admin-button-secondary" href="/">View Site</a>
               <button class="admin-button-secondary" data-open-command type="button">Quick Nav</button>
               {adminUser && (
                 <div class="text-right">

@@ -1,0 +1,1 @@
+ALTER TABLE `admin_users` ADD `author_id` integer REFERENCES authors(id);

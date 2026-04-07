@@ -7,3 +7,7 @@ export async function loginAsAdmin(page: Page): Promise<void> {
   await page.getByRole("button", { name: "Sign In" }).click();
   await page.waitForURL(/\/admin(?:\/?$|\?)/);
 }
+
+export async function fillRichTextEditor(page: Page, text: string): Promise<void> {
+  await page.locator(".toastui-editor-ww-container [contenteditable='true']").first().fill(text);
+}

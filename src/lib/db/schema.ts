@@ -127,6 +127,10 @@ export const adminUsers = sqliteTable(
     email: text("email").notNull(),
     name: text("name").notNull(),
     passwordHash: text("password_hash").notNull(),
+    authorId: integer("author_id").references(() => authors.id, {
+      onDelete: "set null",
+      onUpdate: "cascade",
+    }),
     role: text("role", {
       enum: ["admin", "editor"],
     }).notNull().default("admin"),
@@ -190,6 +194,7 @@ export const activityLogs = sqliteTable(
 );
 
 export const authorsRelations = relations(authors, ({ many }) => ({
+  adminUsers: many(adminUsers),
   posts: many(posts),
 }));
 
@@ -216,7 +221,11 @@ export const postTagsRelations = relations(postTags, ({ one }) => ({
   }),
 }));
 
-export const adminUsersRelations = relations(adminUsers, ({ many }) => ({
+export const adminUsersRelations = relations(adminUsers, ({ many, one }) => ({
+  author: one(authors, {
+    fields: [adminUsers.authorId],
+    references: [authors.id],
+  }),
   activityLogs: many(activityLogs),
   mediaAssets: many(mediaAssets),
 }));

@@ -72,6 +72,7 @@ export async function loginAdmin(
   clearLoginFailures(rateLimitKey);
 
   const sessionUser: AdminSessionUser = {
+    authorId: adminUser.authorId,
     email: adminUser.email,
     id: adminUser.id,
     name: adminUser.name,

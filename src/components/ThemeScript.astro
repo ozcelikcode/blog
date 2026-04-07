@@ -1,0 +1,31 @@
+<script is:inline>
+  (() => {
+    const storageKey = "developer-blog-theme";
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const root = document.documentElement;
+
+    const resolveTheme = () => {
+      try {
+        return localStorage.getItem(storageKey) ?? (media.matches ? "dark" : "light");
+      } catch {
+        return media.matches ? "dark" : "light";
+      }
+    };
+
+    const applyTheme = (theme) => {
+      root.classList.toggle("dark", theme === "dark");
+      root.dataset.theme = theme;
+      root.style.colorScheme = theme;
+      document.dispatchEvent(new CustomEvent("developer-blog-theme-change", { detail: theme }));
+    };
+
+    window.__developerBlogTheme = {
+      applyTheme,
+      media,
+      resolveTheme,
+      storageKey,
+    };
+
+    applyTheme(resolveTheme());
+  })();
+</script>

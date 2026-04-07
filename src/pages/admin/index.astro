@@ -51,6 +51,7 @@ const data = getAdminDashboardPageData();
             <th>Post</th>
             <th>Status</th>
             <th>Updated</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -62,6 +63,9 @@ const data = getAdminDashboardPageData();
               </td>
               <td><AdminStatusBadge status={post.status} /></td>
               <td class="text-[color:var(--page-muted)]">{formatRelativeAdminDate(post.updatedAt)}</td>
+              <td>
+                <a class="admin-button-secondary" href={`/admin/posts/${post.id}`}>Edit</a>
+              </td>
             </tr>
           ))}
         </tbody>

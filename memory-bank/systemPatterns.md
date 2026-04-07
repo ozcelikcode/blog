@@ -23,11 +23,13 @@
 - better-sqlite3 provides the runtime driver
 - WAL mode and foreign keys are enabled on every connection
 - `site_settings`, `admin_users`, `media_assets`, and `activity_logs` extend the original blog schema
+- `admin_users.author_id` links admin identities to editorial authors for post defaults
 - Seed data is idempotent by clearing tables in dependency-safe order
 
 ## Rendering Pattern
 
 - Markdown is stored raw in SQLite
 - Public post pages render sanitized HTML on the server
-- Admin post editing stays Markdown-first with a server-rendered preview endpoint
-- Client-side JavaScript is limited to narrow admin affordances such as preview refresh and command palette toggling
+- Admin post editing now uses a Toast UI WYSIWYG editor while syncing Markdown into the submitted form payload
+- Theme state is initialized in the document head and shared across public and admin layouts via the same local preference key
+- Client-side JavaScript is limited to narrow admin affordances such as the editor bridge, unsaved-change warning, theme toggling, and command palette toggling

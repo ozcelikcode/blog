@@ -14,7 +14,7 @@ if (saveResult?.data?.ok && saveResult.data.redirectTo) {
 }
 
 const postId = parsePositiveIntParam(Astro.params.id, "post id");
-const data = getAdminPostEditorPageData(postId);
+const data = getAdminPostEditorPageData(postId, Astro.locals.adminUser);
 const postState =
   data && saveResult?.data && !saveResult.data.ok
     ? {

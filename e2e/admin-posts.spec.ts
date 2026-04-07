@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { loginAsAdmin } from "./admin-helpers";
+import { fillRichTextEditor, loginAsAdmin } from "./admin-helpers";
 
 test("create, edit, and publish post works", async ({ page }) => {
   const uniqueSuffix = Date.now().toString(36);
@@ -12,11 +12,11 @@ test("create, edit, and publish post works", async ({ page }) => {
   await loginAsAdmin(page);
   await page.goto("/admin/posts/new");
 
+  await expect(page.locator('select[name="authorId"]')).toHaveValue("1");
   await page.locator("#title").fill(draftTitle);
   await page.locator('input[name="slug"]').fill(draftSlug);
-  await page.locator('select[name="authorId"]').selectOption({ label: "Emre Ozcelik" });
   await page.locator('textarea[name="excerpt"]').fill("A post created through the admin panel to verify editorial workflows.");
-  await page.locator('textarea[name="contentMarkdown"]').fill("# Admin flow\n\nThis post was created in Playwright.");
+  await fillRichTextEditor(page, "This post was created in Playwright through the admin editor.");
   await page.getByRole("button", { name: "Save Draft" }).click();
 
   await expect(page).toHaveURL(/\/admin\/posts\/\d+$/);
@@ -27,6 +27,11 @@ test("create, edit, and publish post works", async ({ page }) => {
   await page.getByRole("button", { name: "Publish Now" }).click();
 
   await expect(page).toHaveURL(/\/admin\/posts\/\d+$/);
+  await page.goto("/admin/posts");
+  await page.locator("tr").filter({ hasText: publishedTitle }).getByRole("link", { name: "Edit" }).click();
+  await expect(page).toHaveURL(/\/admin\/posts\/\d+$/);
+  await expect(page.locator("#title")).toHaveValue(publishedTitle);
+
   await page.goto("/admin/posts");
   await expect(page.getByRole("link", { name: publishedTitle })).toBeVisible();
   await expect(page.getByText(publishedSlug)).toBeVisible();

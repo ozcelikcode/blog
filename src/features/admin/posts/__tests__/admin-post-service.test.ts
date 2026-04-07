@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { createSeededTestDatabase } from "@/lib/db/test-utils";
 
 import { findAdminPostBySlug, getAdminPostById } from "../repositories/admin-post-repository";
-import { mutateAdminPost } from "../services/admin-post-service";
+import { getAdminPostEditorPageData, mutateAdminPost } from "../services/admin-post-service";
 
 function createMockContext(): Pick<APIContext, "clientAddress" | "session"> & {
   flashStore: Map<string, unknown>;
@@ -36,6 +36,18 @@ afterEach(() => {
 });
 
 describe("admin post service", () => {
+  it("prefills the logged-in admin author for new posts", () => {
+    const data = getAdminPostEditorPageData(undefined, {
+      authorId: 1,
+      email: "admin@example.com",
+      id: 1,
+      name: "Emre Ozcelik",
+      role: "admin",
+    });
+
+    expect(data?.post.authorId).toBe("1");
+  });
+
   it("creates a draft post", async () => {
     const formData = new FormData();
     const context = createMockContext();
@@ -50,7 +62,7 @@ describe("admin post service", () => {
 
     const result = await mutateAdminPost(
       formData,
-      { email: "admin@example.com", id: 1, name: "Editorial Admin", role: "admin" },
+      { authorId: 1, email: "admin@example.com", id: 1, name: "Emre Ozcelik", role: "admin" },
       context,
     );
 
@@ -81,7 +93,7 @@ describe("admin post service", () => {
 
     const result = await mutateAdminPost(
       formData,
-      { email: "admin@example.com", id: 1, name: "Editorial Admin", role: "admin" },
+      { authorId: 1, email: "admin@example.com", id: 1, name: "Emre Ozcelik", role: "admin" },
       createMockContext(),
     );
 

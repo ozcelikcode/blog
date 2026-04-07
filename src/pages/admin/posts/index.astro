@@ -71,6 +71,7 @@ const data = getAdminPostsPageData({ page, query, sort, status });
               <th>Author</th>
               <th>Tags</th>
               <th>Updated</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -84,6 +85,9 @@ const data = getAdminPostsPageData({ page, query, sort, status });
                 <td>{post.authorName}</td>
                 <td class="text-[color:var(--page-muted)]">{post.tagNames.join(", ") || "None"}</td>
                 <td class="text-[color:var(--page-muted)]">{formatRelativeAdminDate(post.updatedAt)}</td>
+                <td>
+                  <a class="admin-button-secondary" href={`/admin/posts/${post.id}`}>Edit</a>
+                </td>
               </tr>
             ))}
           </tbody>

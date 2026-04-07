@@ -77,6 +77,21 @@
     color: inherit;
   }
 
+  a[href],
+  button:not(:disabled),
+  summary,
+  select:not(:disabled),
+  input[type="checkbox"],
+  input[type="file"],
+  input[type="radio"] {
+    cursor: pointer;
+  }
+
+  input:not([type="checkbox"]):not([type="file"]):not([type="radio"]),
+  textarea {
+    cursor: text;
+  }
+
   img {
     @apply block max-w-full;
   }
@@ -193,7 +208,22 @@
     border-color: color-mix(in srgb, var(--page-border) 85%, transparent);
   }
 
-  .admin-root {
+  html.admin-root,
+  html.admin-root[data-theme="light"] {
+    --page-bg: oklch(0.972 0.008 236);
+    --page-fg: oklch(0.22 0.025 252);
+    --page-muted: oklch(0.5 0.02 248);
+    --page-card: oklch(0.992 0.004 96);
+    --page-border: oklch(0.86 0.012 245);
+    --page-accent: oklch(0.52 0.09 218);
+    --page-accent-soft: oklch(0.93 0.018 220);
+    --admin-sidebar: oklch(0.945 0.01 232);
+    --admin-elevated: oklch(0.982 0.004 94);
+    --admin-danger: oklch(0.62 0.17 24);
+  }
+
+  html.admin-root.dark,
+  html.admin-root[data-theme="dark"] {
     --page-bg: oklch(0.16 0.02 252);
     --page-fg: oklch(0.95 0.01 90);
     --page-muted: oklch(0.74 0.016 250);
@@ -210,7 +240,7 @@
     @apply min-h-screen;
     background:
       radial-gradient(circle at top left, color-mix(in srgb, var(--page-accent) 16%, transparent), transparent 32%),
-      linear-gradient(180deg, color-mix(in srgb, var(--page-bg) 92%, black 8%), var(--page-bg));
+      linear-gradient(180deg, color-mix(in srgb, var(--admin-elevated) 84%, transparent), var(--page-bg));
     color: var(--page-fg);
   }
 
@@ -309,5 +339,65 @@
 
   .admin-table tbody tr:hover {
     background: color-mix(in srgb, var(--page-card) 55%, transparent);
+  }
+
+  .admin-rich-text-editor .toastui-editor-defaultUI {
+    @apply overflow-hidden rounded-[1.75rem] border;
+    background: color-mix(in srgb, var(--page-card) 94%, transparent);
+    border-color: color-mix(in srgb, var(--page-border) 92%, transparent);
+  }
+
+  .admin-rich-text-editor .toastui-editor-defaultUI-toolbar,
+  .admin-rich-text-editor .toastui-editor-mode-switch {
+    background: color-mix(in srgb, var(--admin-elevated) 84%, transparent);
+    border-color: color-mix(in srgb, var(--page-border) 88%, transparent);
+  }
+
+  .admin-rich-text-editor .toastui-editor-toolbar-icons,
+  .admin-rich-text-editor .tab-item {
+    color: var(--page-fg);
+  }
+
+  .admin-root.dark .admin-rich-text-editor .toastui-editor-toolbar-icons {
+    filter: invert(1) saturate(0) brightness(1.4);
+  }
+
+  .admin-rich-text-editor .toastui-editor-contents,
+  .admin-rich-text-editor .toastui-editor-contents p,
+  .admin-rich-text-editor .toastui-editor-contents li,
+  .admin-rich-text-editor .toastui-editor-contents blockquote,
+  .admin-rich-text-editor .ProseMirror,
+  .admin-rich-text-editor .ProseMirror p {
+    color: var(--page-fg);
+  }
+
+  .admin-rich-text-editor .toastui-editor-md-container,
+  .admin-rich-text-editor .toastui-editor-ww-container,
+  .admin-rich-text-editor .ProseMirror,
+  .admin-rich-text-editor .toastui-editor-md-preview {
+    background: transparent;
+  }
+
+  .admin-rich-text-editor .toastui-editor-md-tab-container,
+  .admin-rich-text-editor .toastui-editor-mode-switch {
+    border-top-color: color-mix(in srgb, var(--page-border) 88%, transparent);
+  }
+
+  .admin-rich-text-editor .toastui-editor-md-list-item-style,
+  .admin-rich-text-editor .toastui-editor-ww-list-item-style {
+    color: var(--page-muted);
+  }
+
+  .admin-rich-text-editor .toastui-editor-popup,
+  .admin-rich-text-editor .toastui-editor-dropdown-toolbar {
+    background: var(--page-card);
+    border-color: color-mix(in srgb, var(--page-border) 92%, transparent);
+    color: var(--page-fg);
+  }
+
+  .admin-rich-text-editor .toastui-editor-popup-body input {
+    background: transparent;
+    border-color: color-mix(in srgb, var(--page-border) 88%, transparent);
+    color: var(--page-fg);
   }
 }

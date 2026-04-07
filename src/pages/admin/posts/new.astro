@@ -11,7 +11,7 @@ if (saveResult?.data?.ok && saveResult.data.redirectTo) {
   return Astro.redirect(saveResult.data.redirectTo);
 }
 
-const data = getAdminPostEditorPageData();
+const data = getAdminPostEditorPageData(undefined, Astro.locals.adminUser);
 if (!data) {
   throw new Error("Admin post editor data is unavailable.");
 }

@@ -8,6 +8,7 @@ export const SUBSCRIBER_STATUSES = ["active", "unsubscribed"] as const;
 export type SubscriberStatus = (typeof SUBSCRIBER_STATUSES)[number];
 
 export interface AdminSessionUser {
+  authorId: number | null;
   email: string;
   id: number;
   name: string;
@@ -34,4 +35,5 @@ export const adminNavItems: AdminNavItem[] = [
   { href: "/admin/media", label: "Media" },
   { href: "/admin/settings", label: "Settings" },
   { href: "/admin/activity", label: "Activity" },
+  { href: "/", label: "View Site" },
 ];

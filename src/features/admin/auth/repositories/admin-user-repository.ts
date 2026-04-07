@@ -7,6 +7,7 @@ import { adminUsers } from "@/lib/db/schema";
 import type { AdminRole } from "@/features/admin/types";
 
 export interface AdminUserRecord {
+  authorId: number | null;
   email: string;
   id: number;
   lastLoginAt: string | null;
@@ -28,6 +29,7 @@ export function findAdminUserByEmail(
   return (
     resolvedContext.db
       .select({
+        authorId: adminUsers.authorId,
         email: adminUsers.email,
         id: adminUsers.id,
         lastLoginAt: adminUsers.lastLoginAt,
@@ -48,6 +50,7 @@ export function findAdminUserById(id: number, context?: DatabaseContext): AdminU
   return (
     resolvedContext.db
       .select({
+        authorId: adminUsers.authorId,
         email: adminUsers.email,
         id: adminUsers.id,
         lastLoginAt: adminUsers.lastLoginAt,

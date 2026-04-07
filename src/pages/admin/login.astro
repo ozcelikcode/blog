@@ -2,6 +2,8 @@
 import { actions } from "astro:actions";
 
 import BaseHead from "@/components/BaseHead.astro";
+import ThemeScript from "@/components/ThemeScript.astro";
+import ThemeToggle from "@/components/ThemeToggle.astro";
 import { getSiteSettings } from "@/features/blog/repositories/site-repository";
 import { buildPageSeoMetadata } from "@/lib/seo/metadata";
 import "@/styles/global.css";
@@ -28,14 +30,20 @@ const values = actionResult?.data && !actionResult.data.ok ? actionResult.data.v
 ---
 
 <!doctype html>
-<html class="dark admin-root" data-theme="dark" lang="en">
+<html class="admin-root" lang="en">
   <head>
     <BaseHead metadata={metadata} />
+    <ThemeScript />
     <meta content="noindex, nofollow" name="robots" />
   </head>
   <body class="admin-shell">
     <main class="mx-auto flex min-h-screen w-full max-w-6xl items-center justify-center px-5 py-16">
-      <div class="grid w-full gap-8 lg:grid-cols-[1fr_24rem]">
+      <div class="w-full">
+        <div class="mb-5 flex justify-end">
+          <ThemeToggle />
+        </div>
+
+        <div class="grid w-full gap-8 lg:grid-cols-[1fr_24rem]">
         <section class="admin-panel flex min-h-[32rem] flex-col justify-between">
           <div>
             <p class="eyebrow">Midnight Inkwell</p>
@@ -90,6 +98,7 @@ const values = actionResult?.data && !actionResult.data.ok ? actionResult.data.v
             <button class="admin-button-primary w-full" type="submit">Sign In</button>
           </form>
         </section>
+        </div>
       </div>
     </main>
   </body>

@@ -1,5 +1,6 @@
 ---
 import AdminFieldError from "@/features/admin/components/AdminFieldError.astro";
+import AdminRichTextEditor from "@/features/admin/components/AdminRichTextEditor.astro";
 import AdminStatusBadge from "@/features/admin/components/AdminStatusBadge.astro";
 import type { AdminPostEditorPageData } from "@/features/admin/posts/services/admin-post-service";
 
@@ -60,30 +61,15 @@ const { action, authors, fieldErrors = {}, formError, post, tags } = Astro.props
       </div>
 
       <div class="admin-panel">
-        <div class="mb-4 flex items-center justify-between gap-4">
+        <div class="mb-4">
           <div>
-            <p class="admin-label">Markdown</p>
-            <p class="text-sm text-[color:var(--page-muted)]">Write in Markdown and review the server-rendered preview beside it.</p>
+            <p class="admin-label">Editor</p>
+            <p class="text-sm text-[color:var(--page-muted)]">Write in a modern WYSIWYG editor, switch back to Markdown when needed, and keep Markdown as the stored source of truth.</p>
           </div>
-          <button class="admin-button-secondary" data-preview-toggle type="button">Toggle Preview</button>
         </div>
 
-        <div class="grid gap-6 xl:grid-cols-2">
-          <div>
-            <textarea
-              class="admin-textarea min-h-[34rem] font-mono text-sm leading-7"
-              data-markdown-input
-              name="contentMarkdown"
-              placeholder="Start writing..."
-            >{post.contentMarkdown}</textarea>
-            <AdminFieldError message={fieldErrors.contentMarkdown} />
-          </div>
-          <div class="admin-panel hidden xl:block" data-preview-panel>
-            <div class="article-body min-h-[30rem]" data-preview-output>
-              <p class="text-sm text-[color:var(--page-muted)]">Preview will appear here.</p>
-            </div>
-          </div>
-        </div>
+        <AdminRichTextEditor name="contentMarkdown" value={post.contentMarkdown} />
+        <AdminFieldError message={fieldErrors.contentMarkdown} />
       </div>
 
       <div class="admin-panel">
@@ -181,13 +167,8 @@ const { action, authors, fieldErrors = {}, formError, post, tags } = Astro.props
   const form = document.currentScript?.previousElementSibling;
   const titleInput = form?.querySelector("#title");
   const slugInput = form?.querySelector("[data-slug-input]");
-  const markdownInput = form?.querySelector("[data-markdown-input]");
-  const previewOutput = document.querySelector("[data-preview-output]");
-  const previewToggle = document.querySelector("[data-preview-toggle]");
-  const previewPanel = document.querySelector("[data-preview-panel]");
   let formDirty = false;
   let autoSlug = !(slugInput instanceof HTMLInputElement) || slugInput.value.trim().length === 0;
-  let previewTimer;
 
   const slugify = (value) =>
     value
@@ -197,21 +178,6 @@ const { action, authors, fieldErrors = {}, formError, post, tags } = Astro.props
       .trim()
       .replace(/[\s_-]+/g, "-")
       .replace(/^-+|-+$/g, "");
-
-  const refreshPreview = async () => {
-    if (!(markdownInput instanceof HTMLTextAreaElement) || !(previewOutput instanceof HTMLElement)) return;
-    const response = await fetch("/admin/api/markdown-preview", {
-      body: JSON.stringify({ markdown: markdownInput.value }),
-      headers: {
-        "content-type": "application/json",
-      },
-      method: "POST",
-    });
-
-    if (!response.ok) return;
-    const payload = await response.json();
-    previewOutput.innerHTML = payload.html;
-  };
 
   titleInput?.addEventListener("input", () => {
     if (autoSlug && titleInput instanceof HTMLInputElement && slugInput instanceof HTMLInputElement) {
@@ -226,8 +192,6 @@ const { action, authors, fieldErrors = {}, formError, post, tags } = Astro.props
 
   form?.addEventListener("input", () => {
     formDirty = true;
-    clearTimeout(previewTimer);
-    previewTimer = setTimeout(refreshPreview, 250);
   });
 
   form?.addEventListener("submit", () => {
@@ -238,10 +202,4 @@ const { action, authors, fieldErrors = {}, formError, post, tags } = Astro.props
     if (!formDirty) return;
     event.preventDefault();
   });
-
-  previewToggle?.addEventListener("click", () => {
-    previewPanel?.classList.toggle("hidden");
-  });
-
-  refreshPreview();
 </script>

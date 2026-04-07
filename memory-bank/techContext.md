@@ -11,6 +11,7 @@
 - Astro components and layouts
 - Tailwind CSS v4
 - Fontsource for Newsreader, Inter Variable, and JetBrains Mono
+- Toast UI Editor for the admin post authoring surface
 
 ## Backend / Data
 

@@ -2,6 +2,7 @@
 import BaseHead from "@/components/BaseHead.astro";
 import SiteFooter from "@/components/SiteFooter.astro";
 import SiteHeader from "@/components/SiteHeader.astro";
+import ThemeScript from "@/components/ThemeScript.astro";
 import type { SiteSettingsRecord } from "@/features/blog/types";
 import type { SeoMetadata } from "@/lib/seo/metadata";
 import "@/styles/global.css";
@@ -19,6 +20,7 @@ const { jsonLd, metadata, settings } = Astro.props;
 <html lang="en">
   <head>
     <BaseHead jsonLd={jsonLd} metadata={metadata} />
+    <ThemeScript />
   </head>
   <body>
     <a

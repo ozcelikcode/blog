@@ -7,6 +7,8 @@
 - SQLite schema, migration runner, seed script, backup script, and health check implemented
 - Public blog routes, metadata outputs, newsletter, and health endpoint implemented
 - Admin auth, protected layout, posts, tags, authors, subscribers, media, settings, and activity modules implemented
+- Global theme persistence now applies consistently across public and admin pages
+- Admin posts now expose explicit edit actions, preselect the logged-in admin author, and use a WYSIWYG editor while storing Markdown
 - README and local setup instructions updated
 - `admin-frontend` removed after the Astro admin implementation was completed
 

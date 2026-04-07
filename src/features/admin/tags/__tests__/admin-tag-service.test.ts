@@ -36,7 +36,7 @@ describe("admin tag service", () => {
 
     const result = await saveAdminTag(
       formData,
-      { email: "admin@example.com", id: 1, name: "Editorial Admin", role: "admin" },
+      { authorId: 1, email: "admin@example.com", id: 1, name: "Emre Ozcelik", role: "admin" },
       createMockContext(),
     );
 
@@ -55,7 +55,7 @@ describe("admin tag service", () => {
     expect(() =>
       deleteAdminTagById(
         tag.id,
-        { email: "admin@example.com", id: 1, name: "Editorial Admin", role: "admin" },
+        { authorId: 1, email: "admin@example.com", id: 1, name: "Emre Ozcelik", role: "admin" },
         createMockContext(),
       ),
     ).toThrow("Tags in use cannot be deleted.");

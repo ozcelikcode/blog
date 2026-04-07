@@ -1,0 +1,75 @@
+---
+import "@toast-ui/editor/dist/toastui-editor.css";
+
+interface Props {
+  inputId?: string;
+  name: string;
+  placeholder?: string;
+  value: string;
+}
+
+const {
+  inputId = "contentMarkdown",
+  name,
+  placeholder = "Start writing...",
+  value,
+} = Astro.props;
+---
+
+<div class="admin-rich-text-editor" data-wysiwyg-editor>
+  <div class="min-h-[42rem]" data-wysiwyg-root></div>
+  <textarea hidden data-markdown-input data-markdown-source id={inputId} name={name} placeholder={placeholder}>{value}</textarea>
+</div>
+
+<script>
+  import { Editor } from "@toast-ui/editor";
+
+  document.querySelectorAll<HTMLElement>("[data-wysiwyg-editor]").forEach((container) => {
+    if (container.dataset.editorReady === "true") {
+      return;
+    }
+
+    const editorRoot = container.querySelector<HTMLElement>("[data-wysiwyg-root]");
+    const textarea = container.querySelector<HTMLTextAreaElement>("[data-markdown-source]");
+
+    if (!editorRoot || !textarea) {
+      return;
+    }
+
+    const editor = new Editor({
+      autofocus: false,
+      el: editorRoot,
+      height: "42rem",
+      initialEditType: "wysiwyg",
+      initialValue: textarea.value,
+      placeholder: textarea.placeholder || "Start writing...",
+      previewStyle: window.matchMedia("(min-width: 1280px)").matches ? "vertical" : "tab",
+      usageStatistics: false,
+    });
+
+    const syncMarkdown = () => {
+      const markdown = editor.getMarkdown();
+
+      if (textarea.value === markdown) {
+        return;
+      }
+
+      textarea.value = markdown;
+      textarea.dispatchEvent(new Event("input", { bubbles: true }));
+    };
+
+    editor.on("change", syncMarkdown);
+    syncMarkdown();
+
+    const form = container.closest("form");
+    form?.addEventListener(
+      "submit",
+      () => {
+        textarea.value = editor.getMarkdown();
+      },
+      { capture: true },
+    );
+
+    container.dataset.editorReady = "true";
+  });
+</script>

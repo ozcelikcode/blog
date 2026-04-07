@@ -330,18 +330,39 @@ export function seedDatabase(options: SeedOptions = {}): void {
       })
       .run();
 
+    const insertedAuthors = db
+      .insert(authors)
+      .values(
+        seedAuthors.map((author) => ({
+          ...author,
+          createdAt: "2026-03-01T09:00:00.000Z",
+          updatedAt: "2026-03-01T09:00:00.000Z",
+        })),
+      )
+      .returning({ id: authors.id, name: authors.name })
+      .all();
+    const authorByName = new Map(insertedAuthors.map((author) => [author.name, author.id]));
+
+    const defaultAdminAuthorId = authorByName.get("Emre Ozcelik");
+
+    if (!defaultAdminAuthorId) {
+      throw new Error("Missing default admin author.");
+    }
+
     const [seededAdmin] = db
       .insert(adminUsers)
       .values({
+        authorId: defaultAdminAuthorId,
         createdAt: "2026-03-01T09:00:00.000Z",
         email: "admin@example.com",
         lastLoginAt: "2026-04-01T08:00:00.000Z",
-        name: "Editorial Admin",
+        name: "Emre Ozcelik",
         passwordHash: hashPasswordSync("ChangeMe123!"),
         role: "admin",
         updatedAt: "2026-04-01T08:00:00.000Z",
       })
       .returning({
+        authorId: adminUsers.authorId,
         email: adminUsers.email,
         id: adminUsers.id,
         name: adminUsers.name,
@@ -363,19 +384,6 @@ export function seedDatabase(options: SeedOptions = {}): void {
         })),
       )
       .run();
-
-    const insertedAuthors = db
-      .insert(authors)
-      .values(
-        seedAuthors.map((author) => ({
-          ...author,
-          createdAt: "2026-03-01T09:00:00.000Z",
-          updatedAt: "2026-03-01T09:00:00.000Z",
-        })),
-      )
-      .returning({ id: authors.id, name: authors.name })
-      .all();
-    const authorByName = new Map(insertedAuthors.map((author) => [author.name, author.id]));
 
     const insertedTags = db
       .insert(tags)

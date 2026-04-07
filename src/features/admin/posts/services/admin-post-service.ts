@@ -92,6 +92,21 @@ function toEditorValues(post?: ReturnType<typeof getAdminPostById>): AdminPostEd
   };
 }
 
+function resolvePreferredAuthorId(
+  authors: ReturnType<typeof listAdminAuthorOptions>,
+  actor?: AdminSessionUser,
+): string {
+  if (actor?.authorId && authors.some((author) => author.id === actor.authorId)) {
+    return String(actor.authorId);
+  }
+
+  const matchedAuthor = actor
+    ? authors.find((author) => author.label.toLowerCase() === actor.name.trim().toLowerCase())
+    : undefined;
+
+  return matchedAuthor ? String(matchedAuthor.id) : "";
+}
+
 function resolvePostPersistence(input: PostMutationInput): {
   actionLabel: string;
   publishedAt: string | null;
@@ -204,16 +219,26 @@ export function getAdminPostsPageData(input: {
   };
 }
 
-export function getAdminPostEditorPageData(postId?: number): AdminPostEditorPageData | null {
+export function getAdminPostEditorPageData(
+  postId?: number,
+  actor?: AdminSessionUser,
+): AdminPostEditorPageData | null {
   const post = typeof postId === "number" ? getAdminPostById(postId) : undefined;
 
   if (typeof postId === "number" && !post) {
     return null;
   }
 
+  const authors = listAdminAuthorOptions();
+
   return {
-    authors: listAdminAuthorOptions(),
-    post: toEditorValues(post),
+    authors,
+    post: post
+      ? toEditorValues(post)
+      : {
+          ...toEditorValues(),
+          authorId: resolvePreferredAuthorId(authors, actor),
+        },
     tags: listAdminTagOptions(),
   };
 }
