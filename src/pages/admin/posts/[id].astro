@@ -1,0 +1,48 @@
+---
+import { actions } from "astro:actions";
+
+import AdminEmptyState from "@/features/admin/components/AdminEmptyState.astro";
+import AdminPageHeader from "@/features/admin/components/AdminPageHeader.astro";
+import AdminPostEditorForm from "@/features/admin/components/AdminPostEditorForm.astro";
+import AdminLayout from "@/features/admin/layouts/AdminLayout.astro";
+import { getAdminPostEditorPageData } from "@/features/admin/posts/services/admin-post-service";
+import { parsePositiveIntParam } from "@/lib/http/params";
+
+const saveResult = Astro.getActionResult(actions.admin.posts.save);
+if (saveResult?.data?.ok && saveResult.data.redirectTo) {
+  return Astro.redirect(saveResult.data.redirectTo);
+}
+
+const postId = parsePositiveIntParam(Astro.params.id, "post id");
+const data = getAdminPostEditorPageData(postId);
+const postState =
+  data && saveResult?.data && !saveResult.data.ok
+    ? {
+        ...data.post,
+        ...saveResult.data.values,
+      }
+    : data?.post;
+---
+
+<AdminLayout currentPath="/admin/posts" description="Update an existing post and manage its publication state." title="Edit Post">
+  {data && postState ? (
+    <>
+      <AdminPageHeader
+        description="Change copy, metadata, tags, and publication state without leaving the editor."
+        eyebrow="Editor"
+        title={postState.title || "Edit Post"}
+      />
+
+      <AdminPostEditorForm
+        action={actions.admin.posts.save}
+        authors={data.authors}
+        fieldErrors={saveResult?.data && !saveResult.data.ok ? saveResult.data.fieldErrors : undefined}
+        formError={saveResult?.data && !saveResult.data.ok ? saveResult.data.formError : undefined}
+        post={postState}
+        tags={data.tags}
+      />
+    </>
+  ) : (
+    <AdminEmptyState description="The requested post does not exist." title="Post not found" />
+  )}
+</AdminLayout>

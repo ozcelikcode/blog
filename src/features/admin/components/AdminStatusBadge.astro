@@ -1,0 +1,21 @@
+---
+interface Props {
+  status: string;
+}
+
+const { status } = Astro.props;
+
+const label = status.replaceAll("-", " ");
+const classes =
+  status === "published" || status === "active"
+    ? "bg-[color:color-mix(in_srgb,var(--page-accent)_22%,transparent)] text-[color:var(--page-accent)]"
+    : status === "scheduled"
+      ? "bg-white/6 text-[color:var(--page-fg)]"
+      : status === "unsubscribed"
+        ? "bg-[color:color-mix(in_srgb,var(--admin-danger)_16%,transparent)] text-[color:var(--admin-danger)]"
+        : "bg-white/6 text-[color:var(--page-muted)]";
+---
+
+<span class:list={["inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em]", classes]}>
+  {label}
+</span>

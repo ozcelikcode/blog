@@ -1,0 +1,120 @@
+---
+import { actions } from "astro:actions";
+
+import AdminEmptyState from "@/features/admin/components/AdminEmptyState.astro";
+import AdminPaginationNav from "@/features/admin/components/AdminPaginationNav.astro";
+import AdminPageHeader from "@/features/admin/components/AdminPageHeader.astro";
+import AdminStatusBadge from "@/features/admin/components/AdminStatusBadge.astro";
+import AdminLayout from "@/features/admin/layouts/AdminLayout.astro";
+import { getAdminSubscribersPageData } from "@/features/admin/subscribers/services/admin-subscriber-service";
+import { parseAdminPageQuery } from "@/features/admin/utils/queries";
+import { formatRelativeAdminDate } from "@/lib/utils/dates";
+
+const unsubscribeResult = Astro.getActionResult(actions.admin.subscribers.unsubscribe);
+if (unsubscribeResult?.data?.ok && unsubscribeResult.data.redirectTo) {
+  return Astro.redirect(unsubscribeResult.data.redirectTo);
+}
+
+const page = parseAdminPageQuery(Astro.url.searchParams);
+const query = Astro.url.searchParams.get("q") ?? "";
+const data = getAdminSubscribersPageData({ page, query });
+const exportUrl = query
+  ? `/admin/subscribers/export.csv?${new URLSearchParams({ q: query }).toString()}`
+  : "/admin/subscribers/export.csv";
+---
+
+<AdminLayout currentPath="/admin/subscribers" description="Review newsletter audience health and export the current list." title="Subscribers">
+  <div class="mb-8 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+    <AdminPageHeader
+      description="This view stays read-heavy on purpose: search, export, and unsubscribe without turning the newsletter into a separate system."
+      eyebrow="Audience"
+      title="Subscribers"
+    />
+    <a class="admin-button-secondary self-start xl:self-auto" href={exportUrl}>Export CSV</a>
+  </div>
+
+  <section class="mb-8 grid gap-4 md:grid-cols-3">
+    <div class="admin-panel">
+      <p class="admin-label">Total</p>
+      <p class="font-serif text-4xl italic">{data.stats.total}</p>
+    </div>
+    <div class="admin-panel">
+      <p class="admin-label">Active</p>
+      <p class="font-serif text-4xl italic">{data.stats.active}</p>
+    </div>
+    <div class="admin-panel">
+      <p class="admin-label">Unsubscribed</p>
+      <p class="font-serif text-4xl italic">{data.stats.unsubscribed}</p>
+    </div>
+  </section>
+
+  <form class="admin-panel mb-8 grid gap-4 md:grid-cols-[minmax(0,1fr)_auto]" method="get">
+    <label>
+      <span class="admin-label">Search</span>
+      <input class="admin-input" name="q" placeholder="Email or source" value={data.query} />
+    </label>
+    <div class="flex items-end">
+      <button class="admin-button-primary w-full" type="submit">Apply</button>
+    </div>
+  </form>
+
+  {unsubscribeResult?.data && !unsubscribeResult.data.ok && unsubscribeResult.data.formError && (
+    <div class="admin-panel mb-8 border-[color:color-mix(in_srgb,var(--admin-danger)_40%,transparent)] text-sm text-[color:var(--admin-danger)]">
+      {unsubscribeResult.data.formError}
+    </div>
+  )}
+
+  {data.items.length > 0 ? (
+    <>
+      <div class="admin-panel overflow-x-auto">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Source</th>
+              <th>Joined</th>
+              <th class="text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.items.map((subscriber) => (
+              <tr>
+                <td class="font-medium">{subscriber.email}</td>
+                <td><AdminStatusBadge status={subscriber.status} /></td>
+                <td class="text-[color:var(--page-muted)]">{subscriber.source}</td>
+                <td class="text-[color:var(--page-muted)]">
+                  {subscriber.status === "unsubscribed" && subscriber.unsubscribedAt
+                    ? `Unsubscribed ${formatRelativeAdminDate(subscriber.unsubscribedAt)}`
+                    : formatRelativeAdminDate(subscriber.createdAt)}
+                </td>
+                <td>
+                  <div class="flex justify-end">
+                    {subscriber.status === "active" ? (
+                      <form action={actions.admin.subscribers.unsubscribe} method="post" onsubmit="return confirm('Unsubscribe this reader?');">
+                        <input name="subscriberId" type="hidden" value={subscriber.id} />
+                        <button class="admin-button-danger" type="submit">Unsubscribe</button>
+                      </form>
+                    ) : (
+                      <span class="text-xs uppercase tracking-[0.18em] text-[color:var(--page-muted)]">Inactive</span>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <AdminPaginationNav
+        currentPage={page}
+        pathname={Astro.url.pathname}
+        searchParams={Astro.url.searchParams}
+        totalItems={data.totalItems}
+        totalPages={data.totalPages}
+      />
+    </>
+  ) : (
+    <AdminEmptyState description="No subscribers matched the current filter." title="No subscribers found" />
+  )}
+</AdminLayout>

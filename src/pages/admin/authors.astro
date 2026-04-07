@@ -1,0 +1,153 @@
+---
+import { actions } from "astro:actions";
+
+import AdminEmptyState from "@/features/admin/components/AdminEmptyState.astro";
+import AdminFieldError from "@/features/admin/components/AdminFieldError.astro";
+import AdminPageHeader from "@/features/admin/components/AdminPageHeader.astro";
+import AdminLayout from "@/features/admin/layouts/AdminLayout.astro";
+import { getAdminAuthorsPageData } from "@/features/admin/authors/services/admin-author-service";
+import { parseOptionalPositiveIntParam } from "@/lib/http/params";
+
+const saveResult = Astro.getActionResult(actions.admin.authors.save);
+if (saveResult?.data?.ok && saveResult.data.redirectTo) {
+  return Astro.redirect(saveResult.data.redirectTo);
+}
+
+const deleteResult = Astro.getActionResult(actions.admin.authors.delete);
+if (deleteResult?.data?.ok && deleteResult.data.redirectTo) {
+  return Astro.redirect(deleteResult.data.redirectTo);
+}
+
+const query = Astro.url.searchParams.get("q") ?? "";
+const editAuthorId = parseOptionalPositiveIntParam(Astro.url.searchParams.get("edit"));
+const data = getAdminAuthorsPageData({
+  authorId: editAuthorId,
+  query,
+});
+
+const authorState =
+  saveResult?.data && !saveResult.data.ok
+    ? saveResult.data.values
+    : {
+        authorId: data.selectedAuthor ? String(data.selectedAuthor.id) : undefined,
+        avatarUrl: data.selectedAuthor?.avatarUrl ?? "",
+        bio: data.selectedAuthor?.bio ?? "",
+        name: data.selectedAuthor?.name ?? "",
+      };
+---
+
+<AdminLayout currentPath="/admin/authors" description="Maintain author profiles and prepare the publication for multi-author workflows." title="Authors">
+  <AdminPageHeader
+    description="Author records stay separate from posts so future editorial expansion does not require route churn."
+    eyebrow="Contributors"
+    title="Authors"
+  />
+
+  <div class="grid gap-8 xl:grid-cols-[26rem_minmax(0,1fr)]">
+    <section class="admin-panel">
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <p class="admin-label">{data.selectedAuthor ? "Edit Author" : "New Author"}</p>
+          <h2 class="font-serif text-3xl italic">{data.selectedAuthor ? data.selectedAuthor.name : "Create author"}</h2>
+        </div>
+        {data.selectedAuthor && <a class="admin-button-secondary" href="/admin/authors">Reset</a>}
+      </div>
+
+      <form action={actions.admin.authors.save} class="mt-6 space-y-5" method="post">
+        {authorState.authorId && <input name="authorId" type="hidden" value={authorState.authorId} />}
+
+        <label class="block">
+          <span class="admin-label">Name</span>
+          <input class="admin-input" name="name" value={authorState.name} />
+          <AdminFieldError message={saveResult?.data && !saveResult.data.ok ? saveResult.data.fieldErrors?.name : undefined} />
+        </label>
+
+        <label class="block">
+          <span class="admin-label">Avatar URL</span>
+          <input class="admin-input" name="avatarUrl" placeholder="/images/author.svg" value={authorState.avatarUrl} />
+          <AdminFieldError message={saveResult?.data && !saveResult.data.ok ? saveResult.data.fieldErrors?.avatarUrl : undefined} />
+        </label>
+
+        <label class="block">
+          <span class="admin-label">Bio</span>
+          <textarea class="admin-textarea min-h-32" name="bio">{authorState.bio}</textarea>
+          <AdminFieldError message={saveResult?.data && !saveResult.data.ok ? saveResult.data.fieldErrors?.bio : undefined} />
+        </label>
+
+        {saveResult?.data && !saveResult.data.ok && saveResult.data.formError && (
+          <div class="rounded-2xl border border-[color:color-mix(in_srgb,var(--admin-danger)_40%,transparent)] px-4 py-3 text-sm text-[color:var(--admin-danger)]">
+            {saveResult.data.formError}
+          </div>
+        )}
+
+        <button class="admin-button-primary w-full" type="submit">
+          {data.selectedAuthor ? "Save Author" : "Create Author"}
+        </button>
+      </form>
+    </section>
+
+    <section class="space-y-6">
+      <form class="admin-panel grid gap-4 md:grid-cols-[minmax(0,1fr)_auto]" method="get">
+        <label>
+          <span class="admin-label">Search</span>
+          <input class="admin-input" name="q" placeholder="Name or bio" value={data.query} />
+        </label>
+        <div class="flex items-end">
+          <button class="admin-button-primary w-full" type="submit">Apply</button>
+        </div>
+      </form>
+
+      {deleteResult?.data && !deleteResult.data.ok && deleteResult.data.formError && (
+        <div class="admin-panel border-[color:color-mix(in_srgb,var(--admin-danger)_40%,transparent)] text-sm text-[color:var(--admin-danger)]">
+          {deleteResult.data.formError}
+        </div>
+      )}
+
+      {data.items.length > 0 ? (
+        <div class="admin-panel overflow-x-auto">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Author</th>
+                <th>Bio</th>
+                <th>Posts</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.items.map((author) => (
+                <tr>
+                  <td>
+                    <div class="flex items-center gap-3">
+                      {author.avatarUrl ? (
+                        <img alt="" class="h-11 w-11 rounded-full border border-[color:var(--page-border)] object-cover" src={author.avatarUrl} />
+                      ) : (
+                        <div class="flex h-11 w-11 items-center justify-center rounded-full border border-[color:var(--page-border)] text-xs uppercase tracking-[0.18em] text-[color:var(--page-muted)]">
+                          AU
+                        </div>
+                      )}
+                      <span class="font-medium">{author.name}</span>
+                    </div>
+                  </td>
+                  <td class="max-w-sm text-[color:var(--page-muted)]">{author.bio || "No bio yet."}</td>
+                  <td>{author.postCount}</td>
+                  <td>
+                    <div class="flex justify-end gap-2">
+                      <a class="admin-button-secondary" href={`/admin/authors?edit=${author.id}`}>Edit</a>
+                      <form action={actions.admin.authors.delete} method="post" onsubmit="return confirm('Delete this author?');">
+                        <input name="authorId" type="hidden" value={author.id} />
+                        <button class="admin-button-danger" type="submit">Delete</button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <AdminEmptyState description="No authors match the current filter." title="No authors found" />
+      )}
+    </section>
+  </div>
+</AdminLayout>

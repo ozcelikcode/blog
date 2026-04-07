@@ -1,0 +1,81 @@
+---
+import AdminEmptyState from "@/features/admin/components/AdminEmptyState.astro";
+import AdminPaginationNav from "@/features/admin/components/AdminPaginationNav.astro";
+import AdminPageHeader from "@/features/admin/components/AdminPageHeader.astro";
+import AdminLayout from "@/features/admin/layouts/AdminLayout.astro";
+import { getAdminActivityPageData } from "@/features/admin/activity/services/activity-service";
+import { parseAdminPageQuery } from "@/features/admin/utils/queries";
+import { formatRelativeAdminDate } from "@/lib/utils/dates";
+
+const page = parseAdminPageQuery(Astro.url.searchParams);
+const action = Astro.url.searchParams.get("action") ?? "";
+const data = getAdminActivityPageData({
+  action,
+  page,
+});
+---
+
+<AdminLayout currentPath="/admin/activity" description="Review the audit trail for authentication and content changes." title="Activity">
+  <AdminPageHeader
+    description="The audit feed is minimal by design: enough context to understand who changed what, and when."
+    eyebrow="Audit"
+    title="Activity"
+  />
+
+  <form class="admin-panel mb-8 grid gap-4 md:grid-cols-[minmax(0,1fr)_auto]" method="get">
+    <label>
+      <span class="admin-label">Action</span>
+      <select class="admin-select" name="action">
+        <option selected={data.filters.action === ""} value="">All actions</option>
+        {data.actions.map((item) => (
+          <option selected={data.filters.action === item} value={item}>{item}</option>
+        ))}
+      </select>
+    </label>
+    <div class="flex items-end">
+      <button class="admin-button-primary w-full" type="submit">Apply</button>
+    </div>
+  </form>
+
+  {data.items.length > 0 ? (
+    <>
+      <div class="admin-panel overflow-x-auto">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>Entity</th>
+              <th>Actor</th>
+              <th>IP</th>
+              <th>When</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.items.map((item) => (
+              <tr>
+                <td class="font-medium">{item.action}</td>
+                <td>
+                  <p>{item.entityLabel}</p>
+                  <p class="mt-1 text-xs uppercase tracking-[0.18em] text-[color:var(--page-muted)]">{item.entityType}</p>
+                </td>
+                <td class="text-[color:var(--page-muted)]">{item.actorLabel}</td>
+                <td class="text-[color:var(--page-muted)]">{item.ipAddress ?? "unknown"}</td>
+                <td class="text-[color:var(--page-muted)]">{formatRelativeAdminDate(item.createdAt)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <AdminPaginationNav
+        currentPage={page}
+        pathname={Astro.url.pathname}
+        searchParams={Astro.url.searchParams}
+        totalItems={data.totalItems}
+        totalPages={data.totalPages}
+      />
+    </>
+  ) : (
+    <AdminEmptyState description="No activity entries matched the current filter." title="No activity found" />
+  )}
+</AdminLayout>

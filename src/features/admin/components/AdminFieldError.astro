@@ -1,0 +1,9 @@
+---
+interface Props {
+  message?: string | undefined;
+}
+
+const { message } = Astro.props;
+---
+
+{message && <p class="mt-2 text-xs text-[color:var(--admin-danger)]">{message}</p>}

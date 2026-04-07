@@ -1,0 +1,134 @@
+---
+import { actions } from "astro:actions";
+
+import AdminFieldError from "@/features/admin/components/AdminFieldError.astro";
+import AdminPageHeader from "@/features/admin/components/AdminPageHeader.astro";
+import AdminLayout from "@/features/admin/layouts/AdminLayout.astro";
+import { getAdminSettingsPageData } from "@/features/admin/settings/services/admin-settings-service";
+
+const saveResult = Astro.getActionResult(actions.admin.settings.save);
+if (saveResult?.data?.ok && saveResult.data.redirectTo) {
+  return Astro.redirect(saveResult.data.redirectTo);
+}
+
+const data = getAdminSettingsPageData();
+const settings = saveResult?.data && !saveResult.data.ok ? saveResult.data.values : data.settings;
+---
+
+<AdminLayout currentPath="/admin/settings" description="Control canonical publication metadata and homepage copy." title="Settings">
+  <AdminPageHeader
+    description="Settings changes flow straight into the public site, so the form stays explicit and server-validated."
+    eyebrow="Configuration"
+    title="Settings"
+  />
+
+  <form action={actions.admin.settings.save} class="space-y-8" method="post">
+    <section class="grid gap-8 xl:grid-cols-2">
+      <div class="admin-panel">
+        <h2 class="font-serif text-3xl italic">Site</h2>
+
+        <div class="mt-6 grid gap-5">
+          <label class="block">
+            <span class="admin-label">Site title</span>
+            <input class="admin-input" name="siteTitle" value={settings.siteTitle} />
+            <AdminFieldError message={saveResult?.data && !saveResult.data.ok ? saveResult.data.fieldErrors?.siteTitle : undefined} />
+          </label>
+
+          <label class="block">
+            <span class="admin-label">Site URL</span>
+            <input class="admin-input" name="siteUrl" value={settings.siteUrl} />
+            <AdminFieldError message={saveResult?.data && !saveResult.data.ok ? saveResult.data.fieldErrors?.siteUrl : undefined} />
+          </label>
+
+          <label class="block">
+            <span class="admin-label">Site description</span>
+            <textarea class="admin-textarea min-h-28" name="siteDescription">{settings.siteDescription}</textarea>
+            <AdminFieldError message={saveResult?.data && !saveResult.data.ok ? saveResult.data.fieldErrors?.siteDescription : undefined} />
+          </label>
+        </div>
+      </div>
+
+      <div class="admin-panel">
+        <h2 class="font-serif text-3xl italic">Homepage</h2>
+
+        <div class="mt-6 grid gap-5">
+          <label class="block">
+            <span class="admin-label">Hero title</span>
+            <input class="admin-input" name="homepageHeroTitle" value={settings.homepageHeroTitle} />
+            <AdminFieldError message={saveResult?.data && !saveResult.data.ok ? saveResult.data.fieldErrors?.homepageHeroTitle : undefined} />
+          </label>
+
+          <label class="block">
+            <span class="admin-label">Hero body</span>
+            <textarea class="admin-textarea min-h-32" name="homepageHeroBody">{settings.homepageHeroBody}</textarea>
+            <AdminFieldError message={saveResult?.data && !saveResult.data.ok ? saveResult.data.fieldErrors?.homepageHeroBody : undefined} />
+          </label>
+
+          <label class="block">
+            <span class="admin-label">Newsletter heading</span>
+            <input class="admin-input" name="newsletterHeading" value={settings.newsletterHeading} />
+            <AdminFieldError message={saveResult?.data && !saveResult.data.ok ? saveResult.data.fieldErrors?.newsletterHeading : undefined} />
+          </label>
+
+          <label class="block">
+            <span class="admin-label">Newsletter description</span>
+            <textarea class="admin-textarea min-h-28" name="newsletterDescription">{settings.newsletterDescription}</textarea>
+            <AdminFieldError message={saveResult?.data && !saveResult.data.ok ? saveResult.data.fieldErrors?.newsletterDescription : undefined} />
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid gap-8 xl:grid-cols-2">
+      <div class="admin-panel">
+        <h2 class="font-serif text-3xl italic">SEO Defaults</h2>
+
+        <div class="mt-6 grid gap-5">
+          <label class="block">
+            <span class="admin-label">Title template</span>
+            <input class="admin-input" name="defaultSeoTitleTemplate" value={settings.defaultSeoTitleTemplate} />
+            <AdminFieldError message={saveResult?.data && !saveResult.data.ok ? saveResult.data.fieldErrors?.defaultSeoTitleTemplate : undefined} />
+          </label>
+
+          <label class="block">
+            <span class="admin-label">Default SEO description</span>
+            <textarea class="admin-textarea min-h-28" name="defaultSeoDescription">{settings.defaultSeoDescription}</textarea>
+            <AdminFieldError message={saveResult?.data && !saveResult.data.ok ? saveResult.data.fieldErrors?.defaultSeoDescription : undefined} />
+          </label>
+
+          <label class="block">
+            <span class="admin-label">Default social image</span>
+            <input class="admin-input" name="defaultOgImageUrl" value={settings.defaultOgImageUrl ?? ""} />
+            <AdminFieldError message={saveResult?.data && !saveResult.data.ok ? saveResult.data.fieldErrors?.defaultOgImageUrl : undefined} />
+          </label>
+        </div>
+      </div>
+
+      <div class="admin-panel">
+        <h2 class="font-serif text-3xl italic">Social</h2>
+
+        <div class="mt-6 grid gap-5">
+          <label class="block">
+            <span class="admin-label">Twitter / X handle</span>
+            <input class="admin-input" name="twitterHandle" placeholder="@developerblog" value={settings.twitterHandle ?? ""} />
+            <AdminFieldError message={saveResult?.data && !saveResult.data.ok ? saveResult.data.fieldErrors?.twitterHandle : undefined} />
+          </label>
+
+          <div class="rounded-2xl border border-[color:var(--page-border)] px-4 py-4 text-sm leading-7 text-[color:var(--page-muted)]">
+            Settings updates are restricted to the admin role. Editor-oriented routes can reuse the same repositories later without changing this page structure.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {saveResult?.data && !saveResult.data.ok && saveResult.data.formError && (
+      <div class="admin-panel border-[color:color-mix(in_srgb,var(--admin-danger)_40%,transparent)] text-sm text-[color:var(--admin-danger)]">
+        {saveResult.data.formError}
+      </div>
+    )}
+
+    <div class="flex justify-end">
+      <button class="admin-button-primary min-w-44" type="submit">Save Settings</button>
+    </div>
+  </form>
+</AdminLayout>

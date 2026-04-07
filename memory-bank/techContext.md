@@ -14,10 +14,13 @@
 
 ## Backend / Data
 
-- SQLite database file under `data/`
+- SQLite database files under `data/`
 - better-sqlite3 driver
-- Drizzle ORM schema in [`schema.ts`](/Users/ozcelik/Documents/GitHub/blog/src/lib/db/schema.ts)
+- Drizzle ORM schema in [`src/lib/db/schema.ts`](/Users/ozcelik/Documents/GitHub/blog/src/lib/db/schema.ts)
 - Generated migrations in [`src/lib/db/migrations`](/Users/ozcelik/Documents/GitHub/blog/src/lib/db/migrations)
+- Astro Actions for typed admin mutations
+- Astro Sessions for authenticated admin state
+- Astro Middleware for admin route protection
 
 ## Tooling
 
@@ -30,3 +33,8 @@
 
 - `DATABASE_URL`
 - `SITE_URL`
+
+## Local Defaults
+
+- Local admin email: `admin@example.com`
+- Local admin password: `ChangeMe123!`

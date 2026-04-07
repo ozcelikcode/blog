@@ -15,7 +15,7 @@ export async function POST({ request }: { request: Request }) {
     typeof formData.get("redirectTo") === "string" ? String(formData.get("redirectTo")) : null,
   );
 
-  const result = subscribeToNewsletter(email);
+  const result = subscribeToNewsletter(email, "website");
 
   if (request.headers.get("accept")?.includes("application/json")) {
     const statusCode =

@@ -1,0 +1,66 @@
+---
+import { adminNavItems } from "@/features/admin/types";
+
+const commandItems = [
+  ...adminNavItems,
+  { href: "/admin/posts/new", label: "New Post" },
+];
+---
+
+<div class="hidden" data-command-root>
+  <div class="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm" data-command-overlay></div>
+  <div class="fixed left-1/2 top-24 z-50 w-[min(40rem,calc(100vw-2rem))] -translate-x-1/2 rounded-3xl border bg-[color:var(--page-card)] p-4 shadow-lg" data-command-panel>
+    <label class="admin-label" for="admin-command-input">Quick navigation</label>
+    <input class="admin-input" data-command-input id="admin-command-input" placeholder="Type a route name" type="search" />
+    <div class="mt-4 space-y-2" data-command-items>
+      {commandItems.map((item) => (
+        <a class="admin-sidebar-link block" data-command-item href={item.href}>
+          {item.label}
+        </a>
+      ))}
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  const commandRoot = document.querySelector("[data-command-root]");
+  const commandOverlay = document.querySelector("[data-command-overlay]");
+  const commandInput = document.querySelector("[data-command-input]");
+  const commandItems = [...document.querySelectorAll("[data-command-item]")];
+
+  const openPalette = () => {
+    if (!(commandRoot instanceof HTMLElement) || !(commandInput instanceof HTMLInputElement)) return;
+    commandRoot.classList.remove("hidden");
+    commandInput.value = "";
+    commandItems.forEach((item) => item.classList.remove("hidden"));
+    requestAnimationFrame(() => commandInput.focus());
+  };
+
+  const closePalette = () => {
+    if (!(commandRoot instanceof HTMLElement)) return;
+    commandRoot.classList.add("hidden");
+  };
+
+  document.addEventListener("keydown", (event) => {
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+      event.preventDefault();
+      openPalette();
+    }
+
+    if (event.key === "Escape") {
+      closePalette();
+    }
+  });
+
+  commandOverlay?.addEventListener("click", closePalette);
+  commandInput?.addEventListener("input", () => {
+    if (!(commandInput instanceof HTMLInputElement)) return;
+    const query = commandInput.value.trim().toLowerCase();
+
+    commandItems.forEach((item) => {
+      if (!(item instanceof HTMLElement)) return;
+      const label = item.textContent?.trim().toLowerCase() ?? "";
+      item.classList.toggle("hidden", query.length > 0 && !label.includes(query));
+    });
+  });
+</script>

@@ -20,11 +20,10 @@ const metadata = buildPageSeoMetadata({
       <div class="surface-card space-y-6">
         <p class="eyebrow">Developer-focused publishing</p>
         <h1 class="max-w-3xl font-serif text-5xl tracking-tight sm:text-6xl">
-          A calm, durable blog stack for technical writing.
+          {data.settings.homepageHeroTitle}
         </h1>
         <p class="max-w-2xl text-lg leading-8 text-[color:var(--page-muted)]">
-          Server-rendered publishing with Astro, SQLite, and strict TypeScript. Minimal UI,
-          disciplined architecture, and content stored where the application can own it.
+          {data.settings.homepageHeroBody}
         </p>
         <div class="flex flex-wrap gap-3">
           <a

@@ -18,6 +18,10 @@ export function getSiteSettings(context?: DatabaseContext): SiteSettingsRecord {
 
   return {
     defaultOgImageUrl: record.defaultOgImageUrl,
+    defaultSeoDescription: record.defaultSeoDescription,
+    defaultSeoTitleTemplate: record.defaultSeoTitleTemplate,
+    homepageHeroBody: record.homepageHeroBody,
+    homepageHeroTitle: record.homepageHeroTitle,
     newsletterDescription: record.newsletterDescription,
     newsletterHeading: record.newsletterHeading,
     siteDescription: record.siteDescription,

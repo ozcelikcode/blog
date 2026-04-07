@@ -1,0 +1,43 @@
+---
+import { actions } from "astro:actions";
+
+import AdminPageHeader from "@/features/admin/components/AdminPageHeader.astro";
+import AdminPostEditorForm from "@/features/admin/components/AdminPostEditorForm.astro";
+import AdminLayout from "@/features/admin/layouts/AdminLayout.astro";
+import { getAdminPostEditorPageData } from "@/features/admin/posts/services/admin-post-service";
+
+const saveResult = Astro.getActionResult(actions.admin.posts.save);
+if (saveResult?.data?.ok && saveResult.data.redirectTo) {
+  return Astro.redirect(saveResult.data.redirectTo);
+}
+
+const data = getAdminPostEditorPageData();
+if (!data) {
+  throw new Error("Admin post editor data is unavailable.");
+}
+
+const postState =
+  saveResult?.data && !saveResult.data.ok
+    ? {
+        ...data.post,
+        ...saveResult.data.values,
+      }
+    : data.post;
+---
+
+<AdminLayout currentPath="/admin/posts" description="Draft, schedule, and publish a new article." title="New Post">
+  <AdminPageHeader
+    description="Write in Markdown, assign tags, and control publication state from one view."
+    eyebrow="Compose"
+    title="New Post"
+  />
+
+  <AdminPostEditorForm
+    action={actions.admin.posts.save}
+    authors={data.authors}
+    fieldErrors={saveResult?.data && !saveResult.data.ok ? saveResult.data.fieldErrors : undefined}
+    formError={saveResult?.data && !saveResult.data.ok ? saveResult.data.formError : undefined}
+    post={postState}
+    tags={data.tags}
+  />
+</AdminLayout>

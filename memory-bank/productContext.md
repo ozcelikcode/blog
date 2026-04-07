@@ -2,21 +2,21 @@
 
 ## Why It Exists
 
-The project is a focused, developer-facing blog that prioritizes readability, maintainability, and operational simplicity. It is designed for publishing technical writing without introducing CMS-heavy complexity.
+The project is a focused, developer-facing publication. It needs the reading experience of a calm editorial site and the operational clarity of a lightweight admin panel, without the maintenance burden of a traditional CMS.
 
 ## User Experience Goals
 
-- Fast server-rendered pages
-- Clear typography with narrow reading width
-- Calm light/dark presentation
-- Search that feels reliable without being overbuilt
-- Clean tag navigation and pagination
-- Accessible forms and navigation
+- Fast server-rendered public pages with narrow reading width
+- Minimal, dark editorial admin experience aligned with the public brand
+- Predictable content operations for drafts, scheduling, publishing, and taxonomy management
+- Accessible forms, navigation, search, and pagination
+- Secure server-side admin auth with no client-side auth shortcuts
 
 ## Editorial Model
 
-- Content is stored in SQLite, not filesystem collections
-- Post bodies are Markdown
-- Drafts stay hidden
-- Scheduled posts become visible only after their publish time
-- Featured posts surface on the homepage
+- Content is canonical in SQLite, not filesystem collections
+- Post bodies are Markdown stored in the database
+- Drafts stay hidden from public routes
+- Scheduled posts remain hidden until their publish time
+- Featured content is managed through the admin post editor
+- Settings, media, subscribers, and activity logs are manageable from the admin surface

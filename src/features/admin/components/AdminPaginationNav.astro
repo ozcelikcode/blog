@@ -1,0 +1,45 @@
+---
+import { createPageUrl } from "@/lib/http/query";
+
+interface Props {
+  currentPage: number;
+  pathname: string;
+  searchParams: URLSearchParams;
+  totalItems: number;
+  totalPages: number;
+}
+
+const { currentPage, pathname, searchParams, totalItems, totalPages } = Astro.props;
+const hasPreviousPage = currentPage > 1;
+const hasNextPage = currentPage < totalPages;
+---
+
+{totalItems > 0 && totalPages > 1 && (
+  <nav aria-label="Admin pagination" class="mt-6 flex items-center justify-between gap-4">
+    <a
+      aria-disabled={!hasPreviousPage}
+      class:list={[
+        "admin-button-secondary",
+        !hasPreviousPage && "pointer-events-none opacity-50",
+      ]}
+      href={createPageUrl(pathname, searchParams, currentPage - 1)}
+    >
+      Previous
+    </a>
+
+    <p class="text-sm text-[color:var(--page-muted)]">
+      Page {currentPage} of {totalPages}
+    </p>
+
+    <a
+      aria-disabled={!hasNextPage}
+      class:list={[
+        "admin-button-secondary",
+        !hasNextPage && "pointer-events-none opacity-50",
+      ]}
+      href={createPageUrl(pathname, searchParams, currentPage + 1)}
+    >
+      Next
+    </a>
+  </nav>
+)}

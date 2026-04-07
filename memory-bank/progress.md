@@ -4,21 +4,22 @@
 
 - Astro project scaffolded at repo root
 - Strict TypeScript, Biome, Vitest, Playwright, and Drizzle configured
-- SQLite schema, migration generation, migration runner, seed script, backup script, and health check implemented
-- Homepage, blog listing, post detail, tags, search, RSS, sitemap, robots, 404, newsletter, and health endpoint implemented
-- Unit/integration tests and Playwright flows passing
-- README updated with setup and operational instructions
+- SQLite schema, migration runner, seed script, backup script, and health check implemented
+- Public blog routes, metadata outputs, newsletter, and health endpoint implemented
+- Admin auth, protected layout, posts, tags, authors, subscribers, media, settings, and activity modules implemented
+- README and local setup instructions updated
+- `admin-frontend` removed after the Astro admin implementation was completed
 
 ## Known Tradeoffs
 
-- Search uses SQL `LIKE` across title, excerpt, and tags instead of FTS
-- Cover images are static SVG assets referenced from the seeded database
-- There is no admin panel yet; the architecture is prepared for one
+- Public and admin search still use pragmatic SQL `LIKE` matching instead of FTS
+- Media usage tracking is intentionally limited to post cover image references in v1
+- Role support is foundation-first: `admin` and `editor` exist in the schema, but only `admin` is exercised broadly in the current UI
 
 ## Verification Status
 
+- `npm run db:setup` passes
 - `npm run check` passes
 - `npm run lint` passes
 - `npm run build` passes
-- `npm run test:unit` passes
-- `npm run test:e2e` passes
+- `npm run test` passes

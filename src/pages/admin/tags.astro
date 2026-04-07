@@ -1,0 +1,135 @@
+---
+import { actions } from "astro:actions";
+
+import AdminEmptyState from "@/features/admin/components/AdminEmptyState.astro";
+import AdminFieldError from "@/features/admin/components/AdminFieldError.astro";
+import AdminPageHeader from "@/features/admin/components/AdminPageHeader.astro";
+import AdminLayout from "@/features/admin/layouts/AdminLayout.astro";
+import { getAdminTagsPageData } from "@/features/admin/tags/services/admin-tag-service";
+import { parseOptionalPositiveIntParam } from "@/lib/http/params";
+
+const saveResult = Astro.getActionResult(actions.admin.tags.save);
+if (saveResult?.data?.ok && saveResult.data.redirectTo) {
+  return Astro.redirect(saveResult.data.redirectTo);
+}
+
+const deleteResult = Astro.getActionResult(actions.admin.tags.delete);
+if (deleteResult?.data?.ok && deleteResult.data.redirectTo) {
+  return Astro.redirect(deleteResult.data.redirectTo);
+}
+
+const query = Astro.url.searchParams.get("q") ?? "";
+const editTagId = parseOptionalPositiveIntParam(Astro.url.searchParams.get("edit"));
+const data = getAdminTagsPageData({
+  query,
+  tagId: editTagId,
+});
+
+const tagState =
+  saveResult?.data && !saveResult.data.ok
+    ? saveResult.data.values
+    : {
+        name: data.selectedTag?.name ?? "",
+        slug: data.selectedTag?.slug ?? "",
+        tagId: data.selectedTag ? String(data.selectedTag.id) : undefined,
+      };
+---
+
+<AdminLayout currentPath="/admin/tags" description="Create, edit, and retire taxonomy without breaking post relations." title="Tags">
+  <AdminPageHeader
+    description="Keep the content taxonomy clean, distinct, and durable."
+    eyebrow="Taxonomy"
+    title="Tags"
+  />
+
+  <div class="grid gap-8 xl:grid-cols-[24rem_minmax(0,1fr)]">
+    <section class="admin-panel">
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <p class="admin-label">{data.selectedTag ? "Edit Tag" : "New Tag"}</p>
+          <h2 class="font-serif text-3xl italic">{data.selectedTag ? data.selectedTag.name : "Create tag"}</h2>
+        </div>
+        {data.selectedTag && <a class="admin-button-secondary" href="/admin/tags">Reset</a>}
+      </div>
+
+      <form action={actions.admin.tags.save} class="mt-6 space-y-5" method="post">
+        {tagState.tagId && <input name="tagId" type="hidden" value={tagState.tagId} />}
+
+        <label class="block">
+          <span class="admin-label">Name</span>
+          <input class="admin-input" name="name" value={tagState.name} />
+          <AdminFieldError message={saveResult?.data && !saveResult.data.ok ? saveResult.data.fieldErrors?.name : undefined} />
+        </label>
+
+        <label class="block">
+          <span class="admin-label">Slug</span>
+          <input class="admin-input" name="slug" value={tagState.slug} />
+          <AdminFieldError message={saveResult?.data && !saveResult.data.ok ? saveResult.data.fieldErrors?.slug : undefined} />
+        </label>
+
+        {saveResult?.data && !saveResult.data.ok && saveResult.data.formError && (
+          <div class="rounded-2xl border border-[color:color-mix(in_srgb,var(--admin-danger)_40%,transparent)] px-4 py-3 text-sm text-[color:var(--admin-danger)]">
+            {saveResult.data.formError}
+          </div>
+        )}
+
+        <button class="admin-button-primary w-full" type="submit">
+          {data.selectedTag ? "Save Tag" : "Create Tag"}
+        </button>
+      </form>
+    </section>
+
+    <section class="space-y-6">
+      <form class="admin-panel grid gap-4 md:grid-cols-[minmax(0,1fr)_auto]" method="get">
+        <label>
+          <span class="admin-label">Search</span>
+          <input class="admin-input" name="q" placeholder="Name or slug" value={data.query} />
+        </label>
+        <div class="flex items-end">
+          <button class="admin-button-primary w-full" type="submit">Apply</button>
+        </div>
+      </form>
+
+      {deleteResult?.data && !deleteResult.data.ok && deleteResult.data.formError && (
+        <div class="admin-panel border-[color:color-mix(in_srgb,var(--admin-danger)_40%,transparent)] text-sm text-[color:var(--admin-danger)]">
+          {deleteResult.data.formError}
+        </div>
+      )}
+
+      {data.items.length > 0 ? (
+        <div class="admin-panel overflow-x-auto">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Slug</th>
+                <th>Usage</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.items.map((tag) => (
+                <tr>
+                  <td class="font-medium">{tag.name}</td>
+                  <td class="text-[color:var(--page-muted)]">{tag.slug}</td>
+                  <td>{tag.postCount}</td>
+                  <td>
+                    <div class="flex justify-end gap-2">
+                      <a class="admin-button-secondary" href={`/admin/tags?edit=${tag.id}`}>Edit</a>
+                      <form action={actions.admin.tags.delete} method="post" onsubmit="return confirm('Delete this tag?');">
+                        <input name="tagId" type="hidden" value={tag.id} />
+                        <button class="admin-button-danger" type="submit">Delete</button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <AdminEmptyState description="No tags match the current filter." title="No tags found" />
+      )}
+    </section>
+  </div>
+</AdminLayout>

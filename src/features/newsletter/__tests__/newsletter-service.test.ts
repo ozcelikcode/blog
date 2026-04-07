@@ -28,6 +28,13 @@ describe("newsletter service", () => {
     expect(subscribeToNewsletter("reader@example.com").status).toBe("already-subscribed");
   });
 
+  it("reactivates an unsubscribed email", () => {
+    const result = subscribeToNewsletter("former-reader@example.com");
+
+    expect(result.status).toBe("subscribed");
+    expect(findSubscriberByEmail("former-reader@example.com")?.status).toBe("active");
+  });
+
   it("rejects invalid email addresses", () => {
     expect(subscribeToNewsletter("invalid-email").status).toBe("invalid");
   });

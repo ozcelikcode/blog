@@ -1,0 +1,92 @@
+---
+import BaseHead from "@/components/BaseHead.astro";
+import { adminNavItems } from "@/features/admin/types";
+import AdminCommandPalette from "@/features/admin/components/AdminCommandPalette.astro";
+import AdminFlashToast from "@/features/admin/components/AdminFlashToast.astro";
+import { getSiteSettings } from "@/features/blog/repositories/site-repository";
+import { buildPageSeoMetadata } from "@/lib/seo/metadata";
+import "@/styles/global.css";
+
+interface Props {
+  currentPath: string;
+  description?: string;
+  title: string;
+}
+
+const { currentPath, description, title } = Astro.props;
+const settings = getSiteSettings();
+const metadata = buildPageSeoMetadata({
+  description,
+  pathname: Astro.url.pathname,
+  settings,
+  title,
+});
+const flashMessage = Astro.locals.flashMessage;
+const adminUser = Astro.locals.adminUser;
+---
+
+<!doctype html>
+<html class="dark admin-root" data-theme="dark" lang="en">
+  <head>
+    <BaseHead metadata={metadata} />
+    <meta content="noindex, nofollow" name="robots" />
+  </head>
+  <body class="admin-shell">
+    <div class="grid min-h-screen lg:grid-cols-[17rem_1fr]">
+      <aside class="border-r border-[color:var(--page-border)] bg-[color:var(--admin-sidebar)] px-5 py-6">
+        <a class="block" href="/admin">
+          <span class="font-serif text-3xl italic tracking-tight">The Codex</span>
+          <span class="mt-1 block text-[11px] uppercase tracking-[0.22em] text-[color:var(--page-muted)]">Admin Console</span>
+        </a>
+
+        <nav aria-label="Admin" class="mt-10 space-y-2">
+          {adminNavItems.map((item) => (
+            <a class="admin-sidebar-link" data-active={currentPath === item.href || currentPath.startsWith(`${item.href}/`)} href={item.href}>
+              {item.label}
+            </a>
+          ))}
+        </nav>
+
+        <div class="mt-10 space-y-3">
+          <a class="admin-button-primary w-full" href="/admin/posts/new">New Post</a>
+          <form action="/admin/logout" method="post">
+            <button class="admin-button-secondary w-full" type="submit">Log Out</button>
+          </form>
+        </div>
+      </aside>
+
+      <div class="min-w-0">
+        <header class="sticky top-0 z-30 border-b border-[color:var(--page-border)] bg-[color:color-mix(in_srgb,var(--page-bg)_82%,transparent)] backdrop-blur-xl">
+          <div class="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+            <form action="/admin/posts" class="w-full max-w-xl" method="get">
+              <input class="admin-input" name="q" placeholder="Search posts, slugs, excerpts, authors, tags" type="search" />
+            </form>
+            <div class="flex items-center gap-3">
+              <button class="admin-button-secondary" data-open-command type="button">Quick Nav</button>
+              {adminUser && (
+                <div class="text-right">
+                  <p class="text-sm font-semibold">{adminUser.name}</p>
+                  <p class="text-xs uppercase tracking-[0.16em] text-[color:var(--page-muted)]">{adminUser.role}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </header>
+
+        <main class="px-5 py-8 sm:px-8">
+          <slot />
+        </main>
+      </div>
+    </div>
+
+    <AdminCommandPalette />
+    <AdminFlashToast flashMessage={flashMessage} />
+
+    <script is:inline>
+      const openButton = document.querySelector("[data-open-command]");
+      openButton?.addEventListener("click", () => {
+        document.dispatchEvent(new KeyboardEvent("keydown", { ctrlKey: true, key: "k" }));
+      });
+    </script>
+  </body>
+</html>

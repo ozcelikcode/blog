@@ -51,6 +51,10 @@ export interface PaginationResult<T> {
 
 export interface SiteSettingsRecord {
   defaultOgImageUrl: string | null;
+  defaultSeoDescription: string;
+  defaultSeoTitleTemplate: string;
+  homepageHeroBody: string;
+  homepageHeroTitle: string;
   newsletterDescription: string;
   newsletterHeading: string;
   siteDescription: string;

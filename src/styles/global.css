@@ -192,4 +192,122 @@
     @apply rounded-2xl border;
     border-color: color-mix(in srgb, var(--page-border) 85%, transparent);
   }
+
+  .admin-root {
+    --page-bg: oklch(0.16 0.02 252);
+    --page-fg: oklch(0.95 0.01 90);
+    --page-muted: oklch(0.74 0.016 250);
+    --page-card: oklch(0.2 0.02 252);
+    --page-border: oklch(0.3 0.02 250);
+    --page-accent: oklch(0.72 0.08 216);
+    --page-accent-soft: oklch(0.24 0.03 236);
+    --admin-sidebar: oklch(0.18 0.02 252);
+    --admin-elevated: oklch(0.23 0.02 252);
+    --admin-danger: oklch(0.69 0.16 24);
+  }
+
+  .admin-shell {
+    @apply min-h-screen;
+    background:
+      radial-gradient(circle at top left, color-mix(in srgb, var(--page-accent) 16%, transparent), transparent 32%),
+      linear-gradient(180deg, color-mix(in srgb, var(--page-bg) 92%, black 8%), var(--page-bg));
+    color: var(--page-fg);
+  }
+
+  .admin-panel {
+    @apply rounded-3xl border p-6 shadow-sm;
+    background: color-mix(in srgb, var(--page-card) 94%, transparent);
+    border-color: color-mix(in srgb, var(--page-border) 92%, transparent);
+    box-shadow: 0 30px 80px -50px color-mix(in srgb, var(--page-accent) 20%, transparent);
+  }
+
+  .admin-input,
+  .admin-select,
+  .admin-textarea {
+    @apply w-full rounded-2xl border bg-transparent px-4 py-3 text-sm;
+    border-color: color-mix(in srgb, var(--page-border) 92%, transparent);
+    color: var(--page-fg);
+  }
+
+  .admin-input::placeholder,
+  .admin-textarea::placeholder {
+    color: color-mix(in srgb, var(--page-muted) 85%, transparent);
+  }
+
+  .admin-input:focus,
+  .admin-select:focus,
+  .admin-textarea:focus {
+    border-color: color-mix(in srgb, var(--page-accent) 88%, transparent);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--page-accent) 55%, transparent);
+    outline: none;
+  }
+
+  .admin-label {
+    @apply mb-2 block text-xs font-semibold uppercase tracking-[0.2em];
+    color: var(--page-muted);
+  }
+
+  .admin-help {
+    @apply mt-2 text-xs;
+    color: color-mix(in srgb, var(--page-muted) 90%, transparent);
+  }
+
+  .admin-button-primary,
+  .admin-button-secondary,
+  .admin-button-danger {
+    @apply inline-flex items-center justify-center rounded-full px-4 py-2.5 text-sm font-semibold transition-colors;
+  }
+
+  .admin-button-primary {
+    background: var(--page-accent);
+    color: white;
+  }
+
+  .admin-button-secondary {
+    border: 1px solid color-mix(in srgb, var(--page-border) 94%, transparent);
+    color: var(--page-fg);
+  }
+
+  .admin-button-secondary:hover {
+    border-color: color-mix(in srgb, var(--page-accent) 50%, transparent);
+    color: var(--page-accent);
+  }
+
+  .admin-button-danger {
+    background: color-mix(in srgb, var(--admin-danger) 16%, transparent);
+    color: color-mix(in srgb, var(--admin-danger) 92%, white 8%);
+  }
+
+  .admin-sidebar-link {
+    @apply flex items-center rounded-2xl px-4 py-3 text-sm transition-colors;
+    color: color-mix(in srgb, var(--page-muted) 92%, transparent);
+  }
+
+  .admin-sidebar-link:hover {
+    background: color-mix(in srgb, var(--page-card) 40%, transparent);
+    color: var(--page-fg);
+  }
+
+  .admin-sidebar-link[data-active="true"] {
+    background: color-mix(in srgb, var(--page-accent-soft) 82%, transparent);
+    color: var(--page-fg);
+  }
+
+  .admin-table {
+    @apply w-full border-collapse text-left;
+  }
+
+  .admin-table th {
+    @apply px-4 py-3 text-xs font-semibold uppercase tracking-[0.18em];
+    color: var(--page-muted);
+  }
+
+  .admin-table td {
+    @apply px-4 py-4 align-top text-sm;
+    border-top: 1px solid color-mix(in srgb, var(--page-border) 60%, transparent);
+  }
+
+  .admin-table tbody tr:hover {
+    background: color-mix(in srgb, var(--page-card) 55%, transparent);
+  }
 }

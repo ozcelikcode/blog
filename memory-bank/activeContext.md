@@ -2,23 +2,26 @@
 
 ## Current State
 
-The repo now contains a complete Astro SSR blog implementation with:
+The repo now contains a complete Astro SSR blog plus a production-style admin panel with:
 
-- SQLite/Drizzle schema and generated migration
-- seed data for authors, tags, posts, site settings, and newsletter subscribers
-- public routes and metadata endpoints
-- newsletter and health API endpoints
-- unit/integration and Playwright coverage
+- admin login/logout and session-backed route protection
+- CRUD flows for posts, tags, and authors
+- subscriber listing and CSV export
+- media upload and metadata management
+- site settings editing
+- activity/audit logging
+- updated schema, migration, seed data, and automated coverage
 
 ## Recent Decisions
 
-- Kept SQL inside repositories instead of page files to preserve thin route templates
-- Used simple search over title, excerpt, and tags instead of FTS for lower maintenance
-- Rendered Markdown with `marked` plus `sanitize-html` instead of a large plugin stack
-- Centralized database PRAGMAs and initialization in `src/lib/db/client.ts`
+- Used Astro Actions for typed admin mutations instead of bespoke JSON endpoints
+- Used Astro Sessions plus middleware for auth and route gating
+- Kept admin page files thin by expanding services only where the page complexity justified it
+- Chose simple SQL search and explicit audit records over heavier infrastructure
+- Removed the temporary `admin-frontend` design source after adapting the UI into the Astro app
 
 ## Immediate Next Steps
 
-- Replace seed content with real editorial content when ready
-- Add admin/auth layers on top of the existing DB and service boundaries
-- Introduce richer search only if content volume justifies it
+- Replace seeded editorial content and default admin credentials in non-local environments
+- Add richer role expansion only when editor/admin separation has real product pressure
+- Consider revisions/version history only if editorial workflow proves the need

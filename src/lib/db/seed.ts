@@ -1,7 +1,17 @@
-import { eq } from "drizzle-orm";
+import { hashPasswordSync } from "@/lib/auth/password";
 
 import { createDatabaseContext, deleteDatabaseFiles, resolveDatabasePath } from "./client";
-import { authors, newsletterSubscribers, postTags, posts, siteSettings, tags } from "./schema";
+import {
+  activityLogs,
+  adminUsers,
+  authors,
+  mediaAssets,
+  newsletterSubscribers,
+  postTags,
+  posts,
+  siteSettings,
+  tags,
+} from "./schema";
 
 interface SeedOptions {
   databaseUrl?: string;
@@ -254,6 +264,27 @@ This post should remain hidden until the scheduled publish window opens.`,
   },
 ];
 
+const seedMediaAssets = [
+  {
+    altText: "Editorial notebook and keyboard in soft contrast lighting.",
+    fileName: "editorial-runtime.svg",
+    fileSizeBytes: 1850,
+    mimeType: "image/svg+xml",
+    originalFileName: "post-editorial-runtime.svg",
+    publicUrl: "/images/post-editorial-runtime.svg",
+    storagePath: "public/images/post-editorial-runtime.svg",
+  },
+  {
+    altText: "Abstract layout blocks representing publishing structure.",
+    fileName: "sqlite-content.svg",
+    fileSizeBytes: 1650,
+    mimeType: "image/svg+xml",
+    originalFileName: "post-sqlite-content.svg",
+    publicUrl: "/images/post-sqlite-content.svg",
+    storagePath: "public/images/post-sqlite-content.svg",
+  },
+];
+
 export function seedDatabase(options: SeedOptions = {}): void {
   const databaseUrl = options.databaseUrl;
   const databasePath = resolveDatabasePath(databaseUrl);
@@ -266,17 +297,26 @@ export function seedDatabase(options: SeedOptions = {}): void {
   const { db, sqlite } = context;
 
   sqlite.transaction(() => {
+    db.delete(activityLogs).run();
+    db.delete(mediaAssets).run();
     db.delete(postTags).run();
     db.delete(newsletterSubscribers).run();
     db.delete(posts).run();
     db.delete(tags).run();
     db.delete(authors).run();
+    db.delete(adminUsers).run();
     db.delete(siteSettings).run();
 
     db.insert(siteSettings)
       .values({
         createdAt: "2026-03-01T09:00:00.000Z",
         defaultOgImageUrl: "/images/og-default.svg",
+        defaultSeoDescription:
+          "A focused blog about maintainable full-stack systems, editorial architecture, and disciplined engineering.",
+        defaultSeoTitleTemplate: "%s | Developer Blog",
+        homepageHeroBody:
+          "Server-rendered publishing with Astro, SQLite, and strict TypeScript. Minimal UI, disciplined architecture, and content stored where the application can own it.",
+        homepageHeroTitle: "A calm, durable blog stack for technical writing.",
         id: 1,
         newsletterDescription:
           "One practical note on engineering, architecture, or editorial systems every few weeks.",
@@ -290,22 +330,69 @@ export function seedDatabase(options: SeedOptions = {}): void {
       })
       .run();
 
+    const [seededAdmin] = db
+      .insert(adminUsers)
+      .values({
+        createdAt: "2026-03-01T09:00:00.000Z",
+        email: "admin@example.com",
+        lastLoginAt: "2026-04-01T08:00:00.000Z",
+        name: "Editorial Admin",
+        passwordHash: hashPasswordSync("ChangeMe123!"),
+        role: "admin",
+        updatedAt: "2026-04-01T08:00:00.000Z",
+      })
+      .returning({
+        email: adminUsers.email,
+        id: adminUsers.id,
+        name: adminUsers.name,
+        role: adminUsers.role,
+      })
+      .all();
+
+    if (!seededAdmin) {
+      throw new Error("Failed to seed admin user.");
+    }
+
+    db.insert(mediaAssets)
+      .values(
+        seedMediaAssets.map((asset) => ({
+          ...asset,
+          createdAt: "2026-03-02T10:00:00.000Z",
+          updatedAt: "2026-03-02T10:00:00.000Z",
+          uploadedByAdminUserId: seededAdmin.id,
+        })),
+      )
+      .run();
+
     const insertedAuthors = db
       .insert(authors)
-      .values(seedAuthors.map((author) => ({ ...author, createdAt: "2026-03-01T09:00:00.000Z" })))
+      .values(
+        seedAuthors.map((author) => ({
+          ...author,
+          createdAt: "2026-03-01T09:00:00.000Z",
+          updatedAt: "2026-03-01T09:00:00.000Z",
+        })),
+      )
       .returning({ id: authors.id, name: authors.name })
       .all();
     const authorByName = new Map(insertedAuthors.map((author) => [author.name, author.id]));
 
     const insertedTags = db
       .insert(tags)
-      .values(seedTags.map((tag) => ({ ...tag, createdAt: "2026-03-01T09:00:00.000Z" })))
+      .values(
+        seedTags.map((tag) => ({
+          ...tag,
+          createdAt: "2026-03-01T09:00:00.000Z",
+          updatedAt: "2026-03-01T09:00:00.000Z",
+        })),
+      )
       .returning({ id: tags.id, slug: tags.slug })
       .all();
     const tagBySlug = new Map(insertedTags.map((tag) => [tag.slug, tag.id]));
 
     for (const post of seedPosts) {
       const authorId = authorByName.get(post.authorName);
+
       if (!authorId) {
         throw new Error(`Missing seed author: ${post.authorName}`);
       }
@@ -328,7 +415,7 @@ export function seedDatabase(options: SeedOptions = {}): void {
           title: post.title,
           updatedAt: post.publishedAt ?? "2026-03-01T09:00:00.000Z",
         })
-        .returning({ id: posts.id })
+        .returning({ id: posts.id, slug: posts.slug, title: posts.title })
         .all();
 
       if (!insertedPost) {
@@ -358,14 +445,55 @@ export function seedDatabase(options: SeedOptions = {}): void {
         {
           createdAt: "2026-03-30T08:00:00.000Z",
           email: "reader@example.com",
+          source: "homepage",
+          status: "active",
+          updatedAt: "2026-03-30T08:00:00.000Z",
+        },
+        {
+          createdAt: "2026-03-25T11:15:00.000Z",
+          email: "former-reader@example.com",
+          source: "article",
+          status: "unsubscribed",
+          unsubscribedAt: "2026-04-01T12:30:00.000Z",
+          updatedAt: "2026-04-01T12:30:00.000Z",
+        },
+      ])
+      .run();
+
+    db.insert(activityLogs)
+      .values([
+        {
+          action: "auth.login",
+          actorAdminUserId: seededAdmin.id,
+          createdAt: "2026-04-01T08:00:00.000Z",
+          entityId: String(seededAdmin.id),
+          entityLabel: seededAdmin.email,
+          entityType: "admin_user",
+          ipAddress: "127.0.0.1",
+        },
+        {
+          action: "posts.publish",
+          actorAdminUserId: seededAdmin.id,
+          createdAt: "2026-03-28T09:00:00.000Z",
+          entityId: "1",
+          entityLabel: "Astro as an editorial runtime",
+          entityType: "post",
+          ipAddress: "127.0.0.1",
+        },
+        {
+          action: "settings.update",
+          actorAdminUserId: seededAdmin.id,
+          createdAt: "2026-03-20T14:15:00.000Z",
+          entityId: "1",
+          entityLabel: "Site settings",
+          entityType: "site_settings",
+          ipAddress: "127.0.0.1",
         },
       ])
       .run();
   })();
 
-  const settingsRow = db.query.siteSettings.findFirst({
-    where: eq(siteSettings.id, 1),
-  });
+  const settingsRow = db.select({ id: siteSettings.id }).from(siteSettings).limit(1).all()[0];
 
   if (!settingsRow) {
     throw new Error("Seed failed to create site settings.");

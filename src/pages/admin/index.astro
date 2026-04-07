@@ -1,0 +1,97 @@
+---
+import AdminPageHeader from "@/features/admin/components/AdminPageHeader.astro";
+import AdminStatusBadge from "@/features/admin/components/AdminStatusBadge.astro";
+import AdminLayout from "@/features/admin/layouts/AdminLayout.astro";
+import { getAdminDashboardPageData } from "@/features/admin/services/admin-dashboard-service";
+import { formatRelativeAdminDate } from "@/lib/utils/dates";
+
+const data = getAdminDashboardPageData();
+---
+
+<AdminLayout currentPath="/admin" description="Overview of editorial operations and recent activity." title="Dashboard">
+  <AdminPageHeader
+    description="Review publication health, recent changes, and the current editorial queue."
+    eyebrow="Overview"
+    title="Curator's Overview"
+  />
+
+  <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+    <div class="admin-panel">
+      <p class="admin-label">Total Posts</p>
+      <p class="font-serif text-4xl italic">{data.postSummary.total}</p>
+    </div>
+    <div class="admin-panel">
+      <p class="admin-label">Published</p>
+      <p class="font-serif text-4xl italic">{data.postSummary.published}</p>
+    </div>
+    <div class="admin-panel">
+      <p class="admin-label">Drafts</p>
+      <p class="font-serif text-4xl italic">{data.postSummary.drafts}</p>
+    </div>
+    <div class="admin-panel">
+      <p class="admin-label">Scheduled</p>
+      <p class="font-serif text-4xl italic">{data.postSummary.scheduled}</p>
+    </div>
+    <div class="admin-panel">
+      <p class="admin-label">Subscribers</p>
+      <p class="font-serif text-4xl italic">{data.subscriberStats.total}</p>
+    </div>
+  </section>
+
+  <section class="mt-8 grid gap-8 xl:grid-cols-[1.2fr_0.8fr]">
+    <div class="admin-panel">
+      <div class="mb-6 flex items-center justify-between">
+        <h2 class="font-serif text-3xl italic">Recently Updated Posts</h2>
+        <a class="admin-button-secondary" href="/admin/posts">View All</a>
+      </div>
+
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Post</th>
+            <th>Status</th>
+            <th>Updated</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.postSummary.recentPosts.map((post) => (
+            <tr>
+              <td>
+                <a class="font-medium hover:text-[color:var(--page-accent)]" href={`/admin/posts/${post.id}`}>{post.title}</a>
+                <p class="mt-1 text-xs text-[color:var(--page-muted)]">{post.authorName}</p>
+              </td>
+              <td><AdminStatusBadge status={post.status} /></td>
+              <td class="text-[color:var(--page-muted)]">{formatRelativeAdminDate(post.updatedAt)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="space-y-8">
+      <div class="admin-panel">
+        <p class="admin-label">Newsletter</p>
+        <p class="font-serif text-4xl italic">{data.subscriberStats.active} active readers</p>
+        <p class="mt-3 text-sm leading-7 text-[color:var(--page-muted)]">
+          {data.subscriberStats.unsubscribed} unsubscribed readers and {data.mediaCount} stored media assets.
+        </p>
+      </div>
+
+      <div class="admin-panel">
+        <div class="mb-6 flex items-center justify-between">
+          <h2 class="font-serif text-3xl italic">Recent Activity</h2>
+          <a class="admin-button-secondary" href="/admin/activity">View Activity</a>
+        </div>
+        <div class="space-y-4">
+          {data.activity.map((item) => (
+            <div class="rounded-2xl border border-[color:var(--page-border)] px-4 py-4">
+              <p class="text-sm font-medium">{item.entityLabel}</p>
+              <p class="mt-1 text-xs uppercase tracking-[0.18em] text-[color:var(--page-muted)]">{item.action}</p>
+              <p class="mt-2 text-sm text-[color:var(--page-muted)]">{item.actorLabel}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+</AdminLayout>

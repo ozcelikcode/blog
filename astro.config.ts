@@ -12,6 +12,14 @@ export default defineConfig({
   adapter: node({
     mode: "standalone",
   }),
+  session: {
+    cookie: {
+      name: "developer_blog_session",
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+    },
+    ttl: 60 * 60 * 12,
+  },
   vite: {
     plugins: [tailwindcss() as never],
     resolve: {

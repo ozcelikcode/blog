@@ -27,12 +27,14 @@ export function buildPageSeoMetadata(input: {
   title?: string | undefined;
   type?: "article" | "website" | undefined;
 }): SeoMetadata {
-  const title = input.title ? `${input.title} | ${input.settings.siteTitle}` : input.settings.siteTitle;
+  const title = input.title
+    ? input.settings.defaultSeoTitleTemplate.replace("%s", input.title)
+    : input.settings.siteTitle;
   const url = toAbsoluteUrl(input.settings.siteUrl, input.pathname);
 
   return {
     canonicalUrl: input.canonicalUrl ?? url,
-    description: input.description ?? input.settings.siteDescription,
+    description: input.description ?? input.settings.defaultSeoDescription,
     imageUrl: input.imageUrl
       ? toAbsoluteUrl(input.settings.siteUrl, input.imageUrl)
       : input.settings.defaultOgImageUrl

@@ -1,0 +1,107 @@
+---
+import { actions } from "astro:actions";
+
+import AdminEmptyState from "@/features/admin/components/AdminEmptyState.astro";
+import AdminPaginationNav from "@/features/admin/components/AdminPaginationNav.astro";
+import AdminPageHeader from "@/features/admin/components/AdminPageHeader.astro";
+import AdminStatusBadge from "@/features/admin/components/AdminStatusBadge.astro";
+import AdminLayout from "@/features/admin/layouts/AdminLayout.astro";
+import { getAdminPostsPageData } from "@/features/admin/posts/services/admin-post-service";
+import { parseAdminPageQuery } from "@/features/admin/utils/queries";
+import { formatRelativeAdminDate } from "@/lib/utils/dates";
+
+const saveResult = Astro.getActionResult(actions.admin.posts.save);
+if (saveResult?.data?.ok && saveResult.data.redirectTo) {
+  return Astro.redirect(saveResult.data.redirectTo);
+}
+
+const page = parseAdminPageQuery(Astro.url.searchParams);
+const query = Astro.url.searchParams.get("q") ?? "";
+const status = (Astro.url.searchParams.get("status") as "all" | "draft" | "published" | "scheduled" | null) ?? "all";
+const sort = (Astro.url.searchParams.get("sort") as "created-desc" | "published-desc" | "title-asc" | "updated-desc" | null) ?? "updated-desc";
+const data = getAdminPostsPageData({ page, query, sort, status });
+---
+
+<AdminLayout currentPath="/admin/posts" description="Filter, review, and open posts for editing." title="Posts">
+  <div class="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+    <AdminPageHeader
+      description="Manage the full editorial queue with explicit status and sort controls."
+      eyebrow="Editorial"
+      title="Posts"
+    />
+    <a class="admin-button-primary self-start md:self-auto" href="/admin/posts/new">New Post</a>
+  </div>
+
+  <form class="admin-panel mb-8 grid gap-4 md:grid-cols-[minmax(0,1fr)_12rem_12rem_auto]" method="get">
+    <label>
+      <span class="admin-label">Search</span>
+      <input class="admin-input" name="q" placeholder="Title, slug, excerpt, author, tag" value={data.filters.query} />
+    </label>
+    <label>
+      <span class="admin-label">Status</span>
+      <select class="admin-select" name="status">
+        <option selected={data.filters.status === "all"} value="all">All</option>
+        <option selected={data.filters.status === "draft"} value="draft">Draft</option>
+        <option selected={data.filters.status === "scheduled"} value="scheduled">Scheduled</option>
+        <option selected={data.filters.status === "published"} value="published">Published</option>
+      </select>
+    </label>
+    <label>
+      <span class="admin-label">Sort</span>
+      <select class="admin-select" name="sort">
+        <option selected={data.filters.sort === "updated-desc"} value="updated-desc">Updated</option>
+        <option selected={data.filters.sort === "published-desc"} value="published-desc">Published</option>
+        <option selected={data.filters.sort === "created-desc"} value="created-desc">Created</option>
+        <option selected={data.filters.sort === "title-asc"} value="title-asc">Title</option>
+      </select>
+    </label>
+    <div class="flex items-end">
+      <button class="admin-button-primary w-full" type="submit">Apply</button>
+    </div>
+  </form>
+
+  {data.items.length > 0 ? (
+    <>
+      <div class="admin-panel overflow-x-auto">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Status</th>
+              <th>Author</th>
+              <th>Tags</th>
+              <th>Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.items.map((post) => (
+              <tr>
+                <td>
+                  <a class="font-medium hover:text-[color:var(--page-accent)]" href={`/admin/posts/${post.id}`}>{post.title}</a>
+                  <p class="mt-1 text-xs text-[color:var(--page-muted)]">{post.slug}</p>
+                </td>
+                <td><AdminStatusBadge status={post.status} /></td>
+                <td>{post.authorName}</td>
+                <td class="text-[color:var(--page-muted)]">{post.tagNames.join(", ") || "None"}</td>
+                <td class="text-[color:var(--page-muted)]">{formatRelativeAdminDate(post.updatedAt)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <AdminPaginationNav
+        currentPage={page}
+        pathname={Astro.url.pathname}
+        searchParams={Astro.url.searchParams}
+        totalItems={data.totalItems}
+        totalPages={data.totalPages}
+      />
+    </>
+  ) : (
+    <AdminEmptyState
+      description="No posts matched the current filters. Broaden the search or create a new post."
+      title="No posts found"
+    />
+  )}
+</AdminLayout>

@@ -3,6 +3,7 @@ import NotFoundState from "@/components/NotFoundState.astro";
 import PaginationNav from "@/components/PaginationNav.astro";
 import PostCard from "@/components/PostCard.astro";
 import { getTagPageData } from "@/features/blog/services/post-service";
+import { getFallbackSiteSettings } from "@/features/blog/utils/fallback-site-settings";
 import { parsePageQuery } from "@/features/blog/validators/post-queries";
 import { parseSlugParam } from "@/lib/http/params";
 import BaseLayout from "@/layouts/BaseLayout.astro";
@@ -16,15 +17,7 @@ if (!data || data.pagination.isOutOfRange) {
   Astro.response.status = 404;
 }
 
-const fallbackSettings = data?.settings ?? {
-  defaultOgImageUrl: null,
-  newsletterDescription: "Subscribe for new posts.",
-  newsletterHeading: "Stay up to date",
-  siteDescription: "Developer blog",
-  siteTitle: "Developer Blog",
-  siteUrl: "http://localhost:4321",
-  twitterHandle: null,
-};
+const fallbackSettings = data?.settings ?? getFallbackSiteSettings();
 
 const metadata = buildPageSeoMetadata({
   description: data ? `Posts filed under ${data.tag.name}.` : "Posts by tag.",
