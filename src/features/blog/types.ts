@@ -1,3 +1,5 @@
+import type { SiteLinkItem } from "@/lib/site-chrome";
+
 export const BLOG_PAGE_SIZE = 6;
 export const SEARCH_PAGE_SIZE = 10;
 export const RELATED_POSTS_LIMIT = 3;
@@ -53,8 +55,11 @@ export interface SiteSettingsRecord {
   defaultOgImageUrl: string | null;
   defaultSeoDescription: string;
   defaultSeoTitleTemplate: string;
+  footerLinks: SiteLinkItem[];
+  footerText: string;
   homepageHeroBody: string;
   homepageHeroTitle: string;
+  navigationItems: SiteLinkItem[];
   newsletterDescription: string;
   newsletterHeading: string;
   siteDescription: string;

@@ -35,7 +35,7 @@ export function getAdminCommandItems(): AdminCommandItem[] {
     sort: "updated-desc",
     status: "all",
   }).map((post) => ({
-    description: `${post.status} · ${post.slug}`,
+    description: `${post.status} | ${post.slug}`,
     group: "Recent Posts",
     href: `/admin/posts/${post.id}`,
     keywords: `${post.title} ${post.slug} ${post.authorName} ${post.tagNames.join(" ")}`,

@@ -1,0 +1,308 @@
+---
+import AdminFieldError from "./AdminFieldError.astro";
+
+import { serializeSiteLinkItems, type SiteLinkItem } from "@/lib/site-chrome";
+
+interface Props {
+  addButtonLabel: string;
+  description: string;
+  emptyMessage: string;
+  fieldError?: string;
+  fieldName: string;
+  heading: string;
+  initialItems: SiteLinkItem[];
+  previewVariant: "footer" | "navigation";
+}
+
+const {
+  addButtonLabel,
+  description,
+  emptyMessage,
+  fieldError,
+  fieldName,
+  heading,
+  initialItems,
+  previewVariant,
+} = Astro.props;
+---
+
+<section
+  class="admin-panel"
+  data-link-editor
+  data-preview-variant={previewVariant}
+>
+  <input data-link-editor-input name={fieldName} type="hidden" value={serializeSiteLinkItems(initialItems)} />
+
+  <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+    <div class="space-y-2">
+      <h2 class="font-serif text-3xl italic">{heading}</h2>
+      <p class="max-w-2xl text-sm leading-7 text-[color:var(--page-muted)]">{description}</p>
+      <p class="admin-help">Drag cards to reorder, or use the arrow controls for precise moves.</p>
+    </div>
+    <button class="admin-button-secondary" data-link-editor-add type="button">{addButtonLabel}</button>
+  </div>
+
+  <AdminFieldError message={fieldError} />
+
+  <div class="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
+    <div class="space-y-3" data-link-editor-list></div>
+
+    <div class="admin-link-editor-preview">
+      <p class="admin-label">Preview</p>
+      <div class="admin-link-editor-preview-shell" data-link-editor-preview></div>
+    </div>
+  </div>
+
+  <p class="admin-help mt-4" data-link-editor-empty>{emptyMessage}</p>
+</section>
+
+<script is:inline>
+  (() => {
+    const createLinkEditorId = () => {
+      if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+        return crypto.randomUUID();
+      }
+
+      return `link-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+    };
+
+    const safeParseLinkItems = (value) => {
+      try {
+        const parsed = JSON.parse(value);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    };
+
+    const createField = (labelText, value, onInput) => {
+      const label = document.createElement("label");
+      label.className = "admin-link-editor-field";
+
+      const title = document.createElement("span");
+      title.className = "admin-label";
+      title.textContent = labelText;
+
+      const input = document.createElement("input");
+      input.className = "admin-input";
+      input.type = "text";
+      input.value = value;
+      input.addEventListener("input", () => onInput(input.value));
+
+      label.append(title, input);
+      return label;
+    };
+
+    const createActionButton = (label, onClick) => {
+      const button = document.createElement("button");
+      button.className = "admin-link-editor-icon-button";
+      button.type = "button";
+      button.textContent = label;
+      button.addEventListener("click", onClick);
+      return button;
+    };
+
+    document.querySelectorAll("[data-link-editor]").forEach((root) => {
+      if (!(root instanceof HTMLElement) || root.dataset.initialized === "true") {
+        return;
+      }
+
+      root.dataset.initialized = "true";
+
+      const hiddenInput = root.querySelector("[data-link-editor-input]");
+      const list = root.querySelector("[data-link-editor-list]");
+      const preview = root.querySelector("[data-link-editor-preview]");
+      const emptyState = root.querySelector("[data-link-editor-empty]");
+      const addButton = root.querySelector("[data-link-editor-add]");
+      const previewVariant = root.dataset.previewVariant === "footer" ? "footer" : "navigation";
+
+      if (
+        !(hiddenInput instanceof HTMLInputElement) ||
+        !(list instanceof HTMLElement) ||
+        !(preview instanceof HTMLElement) ||
+        !(emptyState instanceof HTMLElement) ||
+        !(addButton instanceof HTMLButtonElement)
+      ) {
+        return;
+      }
+
+      let dragId = null;
+      let items = safeParseLinkItems(hiddenInput.value).map((item) => ({
+        href: typeof item?.href === "string" ? item.href : "",
+        id: typeof item?.id === "string" && item.id ? item.id : createLinkEditorId(),
+        label: typeof item?.label === "string" ? item.label : "",
+      }));
+
+      const moveItem = (index, direction) => {
+        const targetIndex = index + direction;
+        if (targetIndex < 0 || targetIndex >= items.length) {
+          return;
+        }
+
+        const nextItems = [...items];
+        const [movedItem] = nextItems.splice(index, 1);
+        nextItems.splice(targetIndex, 0, movedItem);
+        items = nextItems;
+        render();
+      };
+
+      const renderPreview = () => {
+        preview.replaceChildren();
+
+        if (items.length === 0) {
+          const emptyPreview = document.createElement("p");
+          emptyPreview.className = "admin-link-editor-preview-empty";
+          emptyPreview.textContent =
+            previewVariant === "navigation"
+              ? "No navigation links yet."
+              : "No footer links yet.";
+          preview.append(emptyPreview);
+          return;
+        }
+
+        const shell = document.createElement("div");
+        shell.className =
+          previewVariant === "navigation"
+            ? "admin-link-editor-preview-nav"
+            : "admin-link-editor-preview-footer";
+
+        items.forEach((item) => {
+          const link = document.createElement("div");
+          link.className = "admin-link-editor-preview-link";
+
+          const label = document.createElement("span");
+          label.className = "admin-link-editor-preview-label";
+          label.textContent = item.label || "Untitled";
+
+          const href = document.createElement("span");
+          href.className = "admin-link-editor-preview-href";
+          href.textContent = item.href || "/";
+
+          link.append(label, href);
+          shell.append(link);
+        });
+
+        preview.append(shell);
+      };
+
+      const renderList = () => {
+        list.replaceChildren();
+
+        items.forEach((item, index) => {
+          const card = document.createElement("article");
+          card.className = "admin-link-editor-item";
+          card.draggable = true;
+          card.dataset.itemId = item.id;
+
+          card.addEventListener("dragstart", () => {
+            dragId = item.id;
+            card.dataset.dragging = "true";
+          });
+
+          card.addEventListener("dragend", () => {
+            dragId = null;
+            card.dataset.dragging = "false";
+          });
+
+          card.addEventListener("dragover", (event) => {
+            event.preventDefault();
+            card.dataset.dragover = "true";
+          });
+
+          card.addEventListener("dragleave", () => {
+            card.dataset.dragover = "false";
+          });
+
+          card.addEventListener("drop", (event) => {
+            event.preventDefault();
+            card.dataset.dragover = "false";
+
+            if (!dragId || dragId === item.id) {
+              return;
+            }
+
+            const draggedIndex = items.findIndex((entry) => entry.id === dragId);
+            const targetIndex = items.findIndex((entry) => entry.id === item.id);
+
+            if (draggedIndex < 0 || targetIndex < 0) {
+              return;
+            }
+
+            const nextItems = [...items];
+            const [draggedItem] = nextItems.splice(draggedIndex, 1);
+            nextItems.splice(targetIndex, 0, draggedItem);
+            items = nextItems;
+            render();
+          });
+
+          const topRow = document.createElement("div");
+          topRow.className = "admin-link-editor-top";
+
+          const handle = document.createElement("span");
+          handle.className = "admin-link-editor-handle";
+          handle.textContent = "Drag";
+
+          const position = document.createElement("span");
+          position.className = "admin-link-editor-position";
+          position.textContent = `Item ${index + 1}`;
+
+          const actions = document.createElement("div");
+          actions.className = "admin-link-editor-actions";
+
+          actions.append(
+            createActionButton("↑", () => moveItem(index, -1)),
+            createActionButton("↓", () => moveItem(index, 1)),
+            createActionButton("Delete", () => {
+              items = items.filter((entry) => entry.id !== item.id);
+              render();
+            }),
+          );
+
+          topRow.append(handle, position, actions);
+
+          const fields = document.createElement("div");
+          fields.className = "admin-link-editor-fields";
+          fields.append(
+            createField("Label", item.label, (value) => {
+              item.label = value;
+              sync();
+            }),
+            createField("URL", item.href, (value) => {
+              item.href = value;
+              sync();
+            }),
+          );
+
+          card.append(topRow, fields);
+          list.append(card);
+        });
+      };
+
+      const sync = () => {
+        hiddenInput.value = JSON.stringify(items);
+        hiddenInput.dispatchEvent(new Event("input", { bubbles: true }));
+        renderPreview();
+        emptyState.style.display = items.length === 0 ? "block" : "none";
+      };
+
+      const render = () => {
+        renderList();
+        sync();
+      };
+
+      addButton.addEventListener("click", () => {
+        items = [
+          ...items,
+          {
+            href: "/",
+            id: createLinkEditorId(),
+            label: previewVariant === "navigation" ? "New Link" : "Footer Link",
+          },
+        ];
+        render();
+      });
+
+      render();
+    });
+  })();
+</script>

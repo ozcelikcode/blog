@@ -22,6 +22,27 @@
       "when": 1775588805922,
       "tag": "0002_volatile_scalphunter",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1775600000000,
+      "tag": "0003_solid_site_chrome",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1775600001000,
+      "tag": "0004_ordered_footer_text",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1775600002000,
+      "tag": "0005_ordered_footer_links",
+      "breakpoints": true
     }
   ]
 }

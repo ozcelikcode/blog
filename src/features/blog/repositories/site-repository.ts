@@ -1,3 +1,8 @@
+import {
+  getDefaultFooterLinks,
+  getDefaultNavigationItems,
+  parseSiteLinkItemsJson,
+} from "@/lib/site-chrome";
 import type { DatabaseContext } from "@/lib/db/client";
 import { getDatabaseContext } from "@/lib/db/client";
 import { siteSettings } from "@/lib/db/schema";
@@ -20,8 +25,11 @@ export function getSiteSettings(context?: DatabaseContext): SiteSettingsRecord {
     defaultOgImageUrl: record.defaultOgImageUrl,
     defaultSeoDescription: record.defaultSeoDescription,
     defaultSeoTitleTemplate: record.defaultSeoTitleTemplate,
+    footerLinks: parseSiteLinkItemsJson(record.footerLinksJson, getDefaultFooterLinks()),
+    footerText: record.footerText,
     homepageHeroBody: record.homepageHeroBody,
     homepageHeroTitle: record.homepageHeroTitle,
+    navigationItems: parseSiteLinkItemsJson(record.navigationItemsJson, getDefaultNavigationItems()),
     newsletterDescription: record.newsletterDescription,
     newsletterHeading: record.newsletterHeading,
     siteDescription: record.siteDescription,

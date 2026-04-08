@@ -1,11 +1,13 @@
 ---
+import type { SiteLinkItem } from "@/lib/site-chrome";
 import ThemeToggle from "./ThemeToggle.astro";
 
 interface Props {
+  navigationItems: SiteLinkItem[];
   siteTitle: string;
 }
 
-const { siteTitle } = Astro.props;
+const { navigationItems, siteTitle } = Astro.props;
 ---
 
 <header class="border-b border-[color:var(--page-border)]">
@@ -15,15 +17,11 @@ const { siteTitle } = Astro.props;
     </a>
 
     <nav aria-label="Primary" class="flex flex-wrap items-center justify-center gap-2 sm:justify-end sm:gap-4">
-      <a class="rounded-full px-3 py-2 text-sm text-[color:var(--page-muted)] hover:text-[color:var(--page-fg)]" href="/">
-        Home
-      </a>
-      <a class="rounded-full px-3 py-2 text-sm text-[color:var(--page-muted)] hover:text-[color:var(--page-fg)]" href="/blog">
-        Blog
-      </a>
-      <a class="rounded-full px-3 py-2 text-sm text-[color:var(--page-muted)] hover:text-[color:var(--page-fg)]" href="/search">
-        Search
-      </a>
+      {navigationItems.map((item) => (
+        <a class="rounded-full px-3 py-2 text-sm text-[color:var(--page-muted)] hover:text-[color:var(--page-fg)]" href={item.href}>
+          {item.label}
+        </a>
+      ))}
       <ThemeToggle />
     </nav>
   </div>

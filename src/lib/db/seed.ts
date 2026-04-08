@@ -1,4 +1,10 @@
 import { hashPasswordSync } from "@/lib/auth/password";
+import {
+  DEFAULT_FOOTER_TEXT,
+  getDefaultFooterLinks,
+  getDefaultNavigationItems,
+  serializeSiteLinkItems,
+} from "@/lib/site-chrome";
 
 import { createDatabaseContext, deleteDatabaseFiles, resolveDatabasePath } from "./client";
 import {
@@ -303,8 +309,8 @@ export function seedDatabase(options: SeedOptions = {}): void {
     db.delete(newsletterSubscribers).run();
     db.delete(posts).run();
     db.delete(tags).run();
-    db.delete(authors).run();
     db.delete(adminUsers).run();
+    db.delete(authors).run();
     db.delete(siteSettings).run();
 
     db.insert(siteSettings)
@@ -314,10 +320,13 @@ export function seedDatabase(options: SeedOptions = {}): void {
         defaultSeoDescription:
           "A focused blog about maintainable full-stack systems, editorial architecture, and disciplined engineering.",
         defaultSeoTitleTemplate: "%s | Developer Blog",
+        footerLinksJson: serializeSiteLinkItems(getDefaultFooterLinks()),
+        footerText: DEFAULT_FOOTER_TEXT,
         homepageHeroBody:
           "Server-rendered publishing with Astro, SQLite, and strict TypeScript. Minimal UI, disciplined architecture, and content stored where the application can own it.",
         homepageHeroTitle: "A calm, durable blog stack for technical writing.",
         id: 1,
+        navigationItemsJson: serializeSiteLinkItems(getDefaultNavigationItems()),
         newsletterDescription:
           "One practical note on engineering, architecture, or editorial systems every few weeks.",
         newsletterHeading: "Quiet technical notes in your inbox",

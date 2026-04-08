@@ -6,6 +6,10 @@ import { deleteAdminAuthorById, saveAdminAuthor } from "@/features/admin/authors
 import { uploadAdminMedia, updateAdminMediaDetails, deleteAdminMediaById } from "@/features/admin/media/services/admin-media-service";
 import { mutateAdminPost } from "@/features/admin/posts/services/admin-post-service";
 import { saveAdminSettings } from "@/features/admin/settings/services/admin-settings-service";
+import {
+  createDefaultSettingsFormValues,
+  getSettingsFormValues,
+} from "@/features/admin/settings/validators/settings-form";
 import { unsubscribeSubscriberById } from "@/features/admin/subscribers/services/admin-subscriber-service";
 import { deleteAdminTagById, saveAdminTag } from "@/features/admin/tags/services/admin-tag-service";
 
@@ -154,19 +158,7 @@ export const server = {
             return {
               formError: "Authentication required.",
               ok: false,
-              values: {
-                defaultOgImageUrl: "",
-                defaultSeoDescription: "",
-                defaultSeoTitleTemplate: "",
-                homepageHeroBody: "",
-                homepageHeroTitle: "",
-                newsletterDescription: "",
-                newsletterHeading: "",
-                siteDescription: "",
-                siteTitle: "",
-                siteUrl: "",
-                twitterHandle: "",
-              },
+              values: createDefaultSettingsFormValues(),
             };
           }
 
@@ -176,19 +168,7 @@ export const server = {
             return {
               formError: "Settings could not be saved. Try again.",
               ok: false,
-              values: {
-                defaultOgImageUrl: String(formData.get("defaultOgImageUrl") ?? ""),
-                defaultSeoDescription: String(formData.get("defaultSeoDescription") ?? ""),
-                defaultSeoTitleTemplate: String(formData.get("defaultSeoTitleTemplate") ?? ""),
-                homepageHeroBody: String(formData.get("homepageHeroBody") ?? ""),
-                homepageHeroTitle: String(formData.get("homepageHeroTitle") ?? ""),
-                newsletterDescription: String(formData.get("newsletterDescription") ?? ""),
-                newsletterHeading: String(formData.get("newsletterHeading") ?? ""),
-                siteDescription: String(formData.get("siteDescription") ?? ""),
-                siteTitle: String(formData.get("siteTitle") ?? ""),
-                siteUrl: String(formData.get("siteUrl") ?? ""),
-                twitterHandle: String(formData.get("twitterHandle") ?? ""),
-              },
+              values: getSettingsFormValues(formData),
             };
           }
         },

@@ -1,0 +1,1 @@
+ALTER TABLE `site_settings` ADD `navigation_items_json` text NOT NULL DEFAULT '[{"id":"home","label":"Home","href":"/"},{"id":"blog","label":"Blog","href":"/blog"},{"id":"search","label":"Search","href":"/search"}]';

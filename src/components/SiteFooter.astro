@@ -1,17 +1,29 @@
 ---
+import type { SiteLinkItem } from "@/lib/site-chrome";
+
 interface Props {
+  footerLinks: SiteLinkItem[];
+  footerText: string;
   siteTitle: string;
 }
 
-const { siteTitle } = Astro.props;
+const { footerLinks, footerText, siteTitle } = Astro.props;
 ---
 
 <footer class="border-t border-[color:var(--page-border)]">
-  <div class="mx-auto flex w-full max-w-6xl flex-col gap-4 px-5 py-8 text-sm text-[color:var(--page-muted)] sm:flex-row sm:items-center sm:justify-between sm:px-8">
-    <p>&copy; {new Date().getFullYear()} {siteTitle}. Built with Astro, SQLite, and Drizzle.</p>
-    <div class="flex items-center gap-4">
-      <a class="hover:text-[color:var(--page-fg)]" href="/rss.xml">RSS</a>
-      <a class="hover:text-[color:var(--page-fg)]" href="/sitemap.xml">Sitemap</a>
+  <div class="mx-auto flex w-full max-w-6xl flex-col gap-6 px-5 py-8 text-sm text-[color:var(--page-muted)] sm:px-8 lg:flex-row lg:items-start lg:justify-between">
+    <div class="max-w-2xl space-y-2">
+      <p>&copy; {new Date().getFullYear()} {siteTitle}.</p>
+      <p>{footerText}</p>
     </div>
+    {footerLinks.length > 0 && (
+      <nav aria-label="Footer" class="flex flex-wrap items-center gap-4">
+        {footerLinks.map((item) => (
+          <a class="hover:text-[color:var(--page-fg)]" href={item.href}>
+            {item.label}
+          </a>
+        ))}
+      </nav>
+    )}
   </div>
 </footer>

@@ -13,6 +13,7 @@
 - Admin settings include live previews and now surface form-level save errors correctly
 - Media uploads now surface form-level errors correctly and the post editor can reuse recent uploaded media assets for cover selection
 - Admin command palette now exposes dynamic navigation across navigation links, posts, tags, authors, and media
+- Public header navigation and footer links/text are now editable from admin settings with sortable previews and persisted in SQLite
 - Responsive behavior is verified with Playwright on mobile viewport widths and supported by layout/editor overflow fixes
 - README and local setup instructions updated
 - `admin-frontend` removed after the Astro admin implementation was completed

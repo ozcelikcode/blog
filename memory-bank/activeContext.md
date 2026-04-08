@@ -10,6 +10,7 @@ The repo now contains a complete Astro SSR blog plus a production-style admin pa
 - subscriber listing and CSV export
 - media upload and metadata management with action-level error handling
 - site settings editing with live previews for brand, search, and social metadata
+- site settings editing with live previews for brand, search, social metadata, primary navigation, and footer content
 - a Toast UI WYSIWYG editor that keeps Markdown as the canonical stored post body
 - a dynamic admin command palette that surfaces posts, tags, authors, media, and settings navigation
 - a post editor media picker for selecting recent uploaded assets as cover images
@@ -27,6 +28,8 @@ The repo now contains a complete Astro SSR blog plus a production-style admin pa
 - Removed the temporary `admin-frontend` design source after adapting the UI into the Astro app
 - Moved public and admin brand labels to `site_settings.siteTitle` so settings changes propagate consistently
 - Added explicit UI feedback paths for failed media uploads and failed settings saves instead of silent refresh behavior
+- Added JSON-backed site chrome settings so public header navigation and footer links/text are editable from the admin settings page
+- Chose sortable card-based editors with live preview for navigation/footer instead of a separate CMS-like menu manager
 
 ## Immediate Next Steps
 

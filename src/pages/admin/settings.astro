@@ -2,9 +2,16 @@
 import { actions } from "astro:actions";
 
 import AdminFieldError from "@/features/admin/components/AdminFieldError.astro";
+import AdminLinkCollectionEditor from "@/features/admin/components/AdminLinkCollectionEditor.astro";
 import AdminPageHeader from "@/features/admin/components/AdminPageHeader.astro";
 import AdminLayout from "@/features/admin/layouts/AdminLayout.astro";
 import { getAdminSettingsPageData } from "@/features/admin/settings/services/admin-settings-service";
+import {
+  getDefaultFooterLinks,
+  getDefaultNavigationItems,
+  parseSiteLinkItemsJson,
+  serializeSiteLinkItems,
+} from "@/lib/site-chrome";
 
 const saveResult = Astro.getActionResult(actions.admin.settings.save);
 if (saveResult?.data?.ok && saveResult.data.redirectTo) {
@@ -12,14 +19,25 @@ if (saveResult?.data?.ok && saveResult.data.redirectTo) {
 }
 
 const data = getAdminSettingsPageData();
-const settings = saveResult?.data && !saveResult.data.ok ? saveResult.data.values : data.settings;
+const settings =
+  saveResult?.data && !saveResult.data.ok
+    ? saveResult.data.values
+    : {
+        ...data.settings,
+        defaultOgImageUrl: data.settings.defaultOgImageUrl ?? "",
+        footerLinksJson: serializeSiteLinkItems(data.settings.footerLinks),
+        navigationItemsJson: serializeSiteLinkItems(data.settings.navigationItems),
+        twitterHandle: data.settings.twitterHandle ?? "",
+      };
 const formError =
   saveResult?.data && !saveResult.data.ok ? saveResult.data.formError : saveResult?.error?.message;
+const navigationItems = parseSiteLinkItemsJson(settings.navigationItemsJson, getDefaultNavigationItems());
+const footerLinks = parseSiteLinkItemsJson(settings.footerLinksJson, getDefaultFooterLinks());
 ---
 
-<AdminLayout currentPath="/admin/settings" description="Control canonical publication metadata and homepage copy." title="Settings">
+<AdminLayout currentPath="/admin/settings" description="Control canonical publication metadata, navigation, and footer content." title="Settings">
   <AdminPageHeader
-    description="Settings changes flow straight into the public site, so the form stays explicit and server-validated."
+    description="Settings changes flow straight into the public site, so the form stays explicit, previewable, and server-validated."
     eyebrow="Configuration"
     title="Settings"
   />
@@ -117,43 +135,85 @@ const formError =
           </label>
 
           <div class="rounded-2xl border border-[color:var(--page-border)] px-4 py-4 text-sm leading-7 text-[color:var(--page-muted)]">
-            Settings updates are restricted to the admin role. Editor-oriented routes can reuse the same repositories later without changing this page structure.
+            Settings updates are restricted to the admin role. Public branding, shell navigation, and footer content all read from this same settings row.
           </div>
         </div>
       </div>
     </section>
 
-    <section class="admin-panel">
-      <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
-        <div class="space-y-4">
-          <div>
-            <p class="admin-label">Live brand preview</p>
-            <h2 class="font-serif text-3xl italic" data-settings-preview-title>{settings.siteTitle}</h2>
-            <p class="mt-3 max-w-2xl text-sm leading-7 text-[color:var(--page-muted)]" data-settings-preview-description>{settings.siteDescription}</p>
-            <p class="mt-4 text-xs uppercase tracking-[0.18em] text-[color:var(--page-muted)]" data-settings-preview-url>{settings.siteUrl}</p>
-          </div>
-          <div class="rounded-2xl border border-[color:var(--page-border)] px-4 py-4">
-            <p class="text-sm font-medium" data-settings-search-title>{settings.siteTitle}</p>
-            <p class="mt-1 text-xs text-[color:var(--page-accent)]" data-settings-search-url>{settings.siteUrl}</p>
-            <p class="mt-2 text-sm text-[color:var(--page-muted)]" data-settings-search-description>{settings.defaultSeoDescription}</p>
-          </div>
-        </div>
+    <AdminLinkCollectionEditor
+      addButtonLabel="Add Navigation Link"
+      description="Manage the public header navigation as a sortable structure. Labels and URLs are editable, and the preview reflects the live order."
+      emptyMessage="Add at least one navigation item if you want the public header to expose custom links."
+      fieldError={saveResult?.data && !saveResult.data.ok ? saveResult.data.fieldErrors?.navigationItemsJson : undefined}
+      fieldName="navigationItemsJson"
+      heading="Primary Navigation"
+      initialItems={navigationItems}
+      previewVariant="navigation"
+    />
 
-        <div class="rounded-[1.75rem] border border-[color:var(--page-border)] bg-[color:color-mix(in_srgb,var(--page-card)_86%,transparent)] p-4">
-          <p class="admin-label">Social card</p>
-          <div class="overflow-hidden rounded-2xl border border-[color:var(--page-border)]">
-            <div class="aspect-[1.91/1] bg-[color:color-mix(in_srgb,var(--page-accent-soft)_82%,transparent)]">
-              <img alt="" class="h-full w-full object-cover" data-settings-preview-image src={settings.defaultOgImageUrl ?? ""} />
-            </div>
-            <div class="space-y-2 px-4 py-4">
-              <p class="text-xs uppercase tracking-[0.16em] text-[color:var(--page-muted)]" data-settings-preview-handle>{settings.twitterHandle || settings.siteUrl}</p>
-              <p class="font-medium" data-settings-preview-card-title>{settings.siteTitle}</p>
-              <p class="text-sm text-[color:var(--page-muted)]" data-settings-preview-card-description>{settings.defaultSeoDescription}</p>
+    <section class="grid gap-8 xl:grid-cols-[minmax(0,1fr)_24rem]">
+      <div class="admin-panel">
+        <h2 class="font-serif text-3xl italic">Footer</h2>
+
+        <div class="mt-6 grid gap-5">
+          <label class="block">
+            <span class="admin-label">Footer text</span>
+            <textarea class="admin-textarea min-h-28" name="footerText">{settings.footerText}</textarea>
+            <p class="admin-help">This supports a concise editorial footer note beneath the copyright line.</p>
+            <AdminFieldError message={saveResult?.data && !saveResult.data.ok ? saveResult.data.fieldErrors?.footerText : undefined} />
+          </label>
+
+          <div class="rounded-[1.75rem] border border-[color:var(--page-border)] bg-[color:color-mix(in_srgb,var(--page-card)_86%,transparent)] p-4">
+            <p class="admin-label">Footer preview</p>
+            <div class="space-y-4 rounded-2xl border border-[color:var(--page-border)] px-4 py-4">
+              <div class="space-y-2">
+                <p class="text-sm text-[color:var(--page-muted)]">
+                  &copy; <span data-footer-year>{new Date().getFullYear()}</span> <span data-footer-preview-title>{settings.siteTitle}</span>.
+                </p>
+                <p class="text-sm leading-7 text-[color:var(--page-muted)]" data-footer-preview-text>{settings.footerText}</p>
+              </div>
+              <div class="flex flex-wrap gap-3" data-footer-preview-links></div>
             </div>
           </div>
         </div>
       </div>
+
+      <div class="admin-panel">
+        <p class="admin-label">Live brand preview</p>
+        <h2 class="font-serif text-3xl italic" data-settings-preview-title>{settings.siteTitle}</h2>
+        <p class="mt-3 max-w-2xl text-sm leading-7 text-[color:var(--page-muted)]" data-settings-preview-description>{settings.siteDescription}</p>
+        <p class="mt-4 text-xs uppercase tracking-[0.18em] text-[color:var(--page-muted)]" data-settings-preview-url>{settings.siteUrl}</p>
+
+        <div class="mt-6 rounded-2xl border border-[color:var(--page-border)] px-4 py-4">
+          <p class="text-sm font-medium" data-settings-search-title>{settings.siteTitle}</p>
+          <p class="mt-1 text-xs text-[color:var(--page-accent)]" data-settings-search-url>{settings.siteUrl}</p>
+          <p class="mt-2 text-sm text-[color:var(--page-muted)]" data-settings-search-description>{settings.defaultSeoDescription}</p>
+        </div>
+
+        <div class="mt-6 overflow-hidden rounded-2xl border border-[color:var(--page-border)]">
+          <div class="aspect-[1.91/1] bg-[color:color-mix(in_srgb,var(--page-accent-soft)_82%,transparent)]">
+            <img alt="" class="h-full w-full object-cover" data-settings-preview-image src={settings.defaultOgImageUrl ?? ""} />
+          </div>
+          <div class="space-y-2 px-4 py-4">
+            <p class="text-xs uppercase tracking-[0.16em] text-[color:var(--page-muted)]" data-settings-preview-handle>{settings.twitterHandle || settings.siteUrl}</p>
+            <p class="font-medium" data-settings-preview-card-title>{settings.siteTitle}</p>
+            <p class="text-sm text-[color:var(--page-muted)]" data-settings-preview-card-description>{settings.defaultSeoDescription}</p>
+          </div>
+        </div>
+      </div>
     </section>
+
+    <AdminLinkCollectionEditor
+      addButtonLabel="Add Footer Link"
+      description="Manage the footer link set separately from the header. Reorder items and keep URLs explicit."
+      emptyMessage="Footer links are optional, but the preview updates instantly when you add them."
+      fieldError={saveResult?.data && !saveResult.data.ok ? saveResult.data.fieldErrors?.footerLinksJson : undefined}
+      fieldName="footerLinksJson"
+      heading="Footer Links"
+      initialItems={footerLinks}
+      previewVariant="footer"
+    />
 
     {formError && (
       <div class="admin-panel border-[color:color-mix(in_srgb,var(--admin-danger)_40%,transparent)] text-sm text-[color:var(--admin-danger)]">
@@ -202,6 +262,8 @@ const formError =
     bindText("[data-settings-preview-handle]", "twitterHandle", "siteUrl");
     bindText("[data-settings-preview-card-title]", "siteTitle");
     bindText("[data-settings-preview-card-description]", "defaultSeoDescription");
+    bindText("[data-footer-preview-title]", "siteTitle");
+    bindText("[data-footer-preview-text]", "footerText");
 
     const imageOutput = document.querySelector("[data-settings-preview-image]");
     const imageInput = settingsForm.elements.namedItem("defaultOgImageUrl");
@@ -215,6 +277,38 @@ const formError =
 
       imageInput.addEventListener("input", syncImage);
       syncImage();
+    }
+
+    const footerLinksOutput = document.querySelector("[data-footer-preview-links]");
+    const footerLinksInput = settingsForm.elements.namedItem("footerLinksJson");
+
+    if (footerLinksOutput instanceof HTMLElement && footerLinksInput instanceof HTMLInputElement) {
+      const syncFooterLinks = () => {
+        footerLinksOutput.replaceChildren();
+
+        try {
+          const items = JSON.parse(footerLinksInput.value);
+          if (!Array.isArray(items)) {
+            return;
+          }
+
+          for (const item of items) {
+            if (typeof item?.label !== "string" || typeof item?.href !== "string") {
+              continue;
+            }
+
+            const chip = document.createElement("span");
+            chip.className = "admin-preview-chip";
+            chip.textContent = `${item.label} | ${item.href}`;
+            footerLinksOutput.append(chip);
+          }
+        } catch {
+          footerLinksOutput.replaceChildren();
+        }
+      };
+
+      footerLinksInput.addEventListener("input", syncFooterLinks);
+      syncFooterLinks();
     }
   }
 </script>

@@ -24,6 +24,7 @@
 - better-sqlite3 provides the runtime driver
 - WAL mode and foreign keys are enabled on every connection
 - `site_settings`, `admin_users`, `media_assets`, and `activity_logs` extend the original blog schema
+- `site_settings.navigation_items_json` and `site_settings.footer_links_json` store ordered site chrome links as JSON arrays, while `site_settings.footer_text` stores the editorial footer copy
 - `admin_users.author_id` links admin identities to editorial authors for post defaults
 - Seed data is idempotent by clearing tables in dependency-safe order
 
@@ -41,3 +42,4 @@
 - The command palette is data-driven from admin services rather than hardcoded route lists
 - Media management stays intentionally lightweight: uploaded files live under `public/uploads/media`, metadata lives in SQLite, and current usage checks only block assets referenced by post covers
 - Responsive admin tables and editor surfaces prefer horizontal containment (`overflow-x-auto`, `min-w-0`) over separate mobile-only component forks
+- Settings uses client-side sortable link editors for navigation and footer management, but the canonical stored format remains validated JSON submitted through a regular form post
