@@ -22,6 +22,7 @@ const postSchema = z.object({
   isFeatured: z.boolean(),
   postId: z.coerce.number().int().positive().optional(),
   publishedAt: z.string().trim(),
+  showAuthorInMeta: z.boolean(),
   seoDescription: z.string().trim().max(320).optional(),
   seoTitle: z.string().trim().max(160).optional(),
   slug: z
@@ -44,6 +45,7 @@ export type PostFormValues = {
   isFeatured: boolean;
   postId?: string | undefined;
   publishedAt: string;
+  showAuthorInMeta: boolean;
   seoDescription: string;
   seoTitle: string;
   slug: string;
@@ -62,6 +64,7 @@ export interface PostMutationInput {
   isFeatured: boolean;
   postId?: number | undefined;
   publishedAt: string | null;
+  showAuthorInMeta: boolean;
   seoDescription: string | null;
   seoTitle: string | null;
   slug: string;
@@ -84,6 +87,7 @@ function buildValues(formData: FormData): PostFormValues {
     isFeatured: formData.get("isFeatured") === "on",
     postId: typeof formData.get("postId") === "string" ? String(formData.get("postId")) : undefined,
     publishedAt: String(formData.get("publishedAt") ?? ""),
+    showAuthorInMeta: formData.get("showAuthorInMeta") === "on",
     seoDescription: String(formData.get("seoDescription") ?? ""),
     seoTitle: String(formData.get("seoTitle") ?? ""),
     slug: rawSlug || slugify(rawTitle),

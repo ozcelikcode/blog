@@ -35,11 +35,11 @@ const postState =
 
       <AdminPostEditorForm
         action={actions.admin.posts.save}
-        authors={data.authors}
         fieldErrors={saveResult?.data && !saveResult.data.ok ? saveResult.data.fieldErrors : undefined}
         formError={saveResult?.data && !saveResult.data.ok ? saveResult.data.formError : undefined}
         mediaAssets={data.mediaAssets}
         post={postState}
+        sessionAuthor={data.sessionAuthor}
         tags={data.tags}
       />
     </>

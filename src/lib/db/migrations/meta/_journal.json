@@ -43,6 +43,13 @@
       "when": 1775600002000,
       "tag": "0005_ordered_footer_links",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1775680000000,
+      "tag": "0006_ordered_post_author_meta",
+      "breakpoints": true
     }
   ]
 }

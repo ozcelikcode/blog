@@ -14,6 +14,9 @@ The repo now contains a complete Astro SSR blog plus a production-style admin pa
 - a Toast UI WYSIWYG editor that keeps Markdown as the canonical stored post body
 - a dynamic admin command palette that surfaces posts, tags, authors, media, and settings navigation
 - a post editor media picker for selecting recent uploaded assets as cover images
+- a constrained quick navigation palette height that now scrolls internally instead of overflowing below the viewport
+- a locked post author workflow where the author field is not selectable in the post editor and the signed-in admin identity is shown
+- a per-post `showAuthorInMeta` toggle (default on) that controls whether the author name appears in the public post header metadata row
 - activity/audit logging
 - updated schema, migration, seed data, and automated coverage
 - responsive admin and public layouts verified by Playwright at mobile viewport widths
@@ -30,6 +33,7 @@ The repo now contains a complete Astro SSR blog plus a production-style admin pa
 - Added explicit UI feedback paths for failed media uploads and failed settings saves instead of silent refresh behavior
 - Added JSON-backed site chrome settings so public header navigation and footer links/text are editable from the admin settings page
 - Chose sortable card-based editors with live preview for navigation/footer instead of a separate CMS-like menu manager
+- Chose a post-level author-visibility switch rather than a site-wide setting so editorial control can vary per article
 
 ## Immediate Next Steps
 

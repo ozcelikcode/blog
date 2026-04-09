@@ -14,6 +14,9 @@
 - Media uploads now surface form-level errors correctly and the post editor can reuse recent uploaded media assets for cover selection
 - Admin command palette now exposes dynamic navigation across navigation links, posts, tags, authors, and media
 - Public header navigation and footer links/text are now editable from admin settings with sortable previews and persisted in SQLite
+- Quick navigation overflow is fixed with internal scroll behavior
+- Post editor now locks author selection and displays the signed-in admin identity in the author section
+- Public post headers can now show/hide author names per post via an admin toggle that defaults to enabled
 - Responsive behavior is verified with Playwright on mobile viewport widths and supported by layout/editor overflow fixes
 - README and local setup instructions updated
 - `admin-frontend` removed after the Astro admin implementation was completed

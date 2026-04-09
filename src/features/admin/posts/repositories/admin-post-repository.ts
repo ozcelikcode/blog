@@ -25,6 +25,7 @@ export interface AdminPostEditorRecord {
   excerpt: string;
   id: number;
   isFeatured: boolean;
+  showAuthorInMeta: boolean;
   publishedAt: string | null;
   seoDescription: string | null;
   seoTitle: string | null;
@@ -42,6 +43,7 @@ export interface AdminPostPersistenceInput {
   coverImageUrl: string | null;
   excerpt: string;
   isFeatured: boolean;
+  showAuthorInMeta: boolean;
   publishedAt: string | null;
   seoDescription: string | null;
   seoTitle: string | null;
@@ -190,6 +192,7 @@ export function getAdminPostById(id: number, context?: DatabaseContext): AdminPo
       excerpt: posts.excerpt,
       id: posts.id,
       isFeatured: posts.isFeatured,
+      showAuthorInMeta: posts.showAuthorInMeta,
       publishedAt: posts.publishedAt,
       seoDescription: posts.seoDescription,
       seoTitle: posts.seoTitle,

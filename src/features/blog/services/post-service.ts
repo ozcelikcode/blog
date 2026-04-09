@@ -40,6 +40,7 @@ function mapPostListItem(post: ReturnType<typeof listPublishedPosts>[number]): P
     isFeatured: post.isFeatured,
     publishedAt: post.publishedAt,
     readingTimeMinutes: calculateReadingTime(post.contentMarkdown),
+    showAuthorInMeta: post.showAuthorInMeta,
     slug: post.slug,
     tags: post.tags,
     title: post.title,

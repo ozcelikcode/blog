@@ -135,6 +135,7 @@ export const server = {
                 intent: "save",
                 isFeatured: false,
                 publishedAt: "",
+                showAuthorInMeta: true,
                 seoDescription: "",
                 seoTitle: "",
                 slug: "",

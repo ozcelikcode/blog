@@ -56,6 +56,12 @@ const newsletterState = Astro.url.searchParams.get("newsletter");
             <span>{formatPublishedDate(data.post.publishedAt)}</span>
             <span aria-hidden="true">&middot;</span>
             <span>{data.post.readingTimeMinutes} min read</span>
+            {data.post.showAuthorInMeta && (
+              <>
+                <span aria-hidden="true">&middot;</span>
+                <span>by {data.post.author.name}</span>
+              </>
+            )}
           </div>
 
           <h1 class="font-serif text-5xl tracking-tight sm:text-6xl">{data.post.title}</h1>

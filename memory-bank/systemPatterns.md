@@ -26,6 +26,7 @@
 - `site_settings`, `admin_users`, `media_assets`, and `activity_logs` extend the original blog schema
 - `site_settings.navigation_items_json` and `site_settings.footer_links_json` store ordered site chrome links as JSON arrays, while `site_settings.footer_text` stores the editorial footer copy
 - `admin_users.author_id` links admin identities to editorial authors for post defaults
+- `posts.show_author_in_meta` stores whether public post headers should include the author byline
 - Seed data is idempotent by clearing tables in dependency-safe order
 
 ## Rendering Pattern
@@ -36,6 +37,7 @@
 - Theme state is initialized in the document head and shared across public and admin layouts via the same local preference key
 - Public and admin shell branding read from `site_settings` instead of hardcoded labels
 - Client-side JavaScript is limited to narrow admin affordances such as the editor bridge, unsaved-change warning, theme toggling, command palette toggling, and preview syncing for settings/post SEO cards
+- Command palette panels use viewport-constrained scrolling to prevent clipping on shorter screens
 
 ## Admin UX Pattern
 

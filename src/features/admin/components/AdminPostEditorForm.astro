@@ -10,11 +10,11 @@ interface Props {
   fieldErrors?: Record<string, string>;
   formError?: string;
   post: AdminPostEditorPageData["post"];
+  sessionAuthor: AdminPostEditorPageData["sessionAuthor"];
   tags: AdminPostEditorPageData["tags"];
-  authors: AdminPostEditorPageData["authors"];
 }
 
-const { action, authors, fieldErrors = {}, formError, mediaAssets, post, tags } = Astro.props;
+const { action, fieldErrors = {}, formError, mediaAssets, post, sessionAuthor, tags } = Astro.props;
 ---
 
 <form action={action} class="space-y-8" method="post">
@@ -34,16 +34,16 @@ const { action, authors, fieldErrors = {}, formError, mediaAssets, post, tags } 
             <AdminFieldError message={fieldErrors.slug} />
           </label>
 
-          <label>
+          <div>
             <span class="admin-label">Author</span>
-            <select class="admin-select" name="authorId">
-              <option value="">Select author</option>
-              {authors.map((author) => (
-                <option selected={post.authorId === String(author.id)} value={author.id}>{author.label}</option>
-              ))}
-            </select>
+            <input name="authorId" type="hidden" value={post.authorId} />
+            <div class="rounded-2xl border border-[color:var(--page-border)] px-4 py-3 text-sm">
+              <p class="font-semibold">{sessionAuthor?.name ?? "Signed-in admin"}</p>
+              <p class="mt-1 text-xs text-[color:var(--page-muted)]">{sessionAuthor?.email ?? "No active session user."}</p>
+              <p class="mt-2 text-xs uppercase tracking-[0.16em] text-[color:var(--page-muted)]">Author selection is locked for this workflow.</p>
+            </div>
             <AdminFieldError message={fieldErrors.authorId} />
-          </label>
+          </div>
         </div>
 
         <label class="mt-6 block">
@@ -56,6 +56,10 @@ const { action, authors, fieldErrors = {}, formError, mediaAssets, post, tags } 
           <label class="inline-flex items-center gap-3 text-sm">
             <input checked={post.isFeatured} class="h-4 w-4 rounded border-[color:var(--page-border)] bg-transparent" name="isFeatured" type="checkbox" />
             <span>Feature on homepage</span>
+          </label>
+          <label class="inline-flex items-center gap-3 text-sm">
+            <input checked={post.showAuthorInMeta} class="h-4 w-4 rounded border-[color:var(--page-border)] bg-transparent" name="showAuthorInMeta" type="checkbox" />
+            <span>Show author in post header</span>
           </label>
           <AdminStatusBadge status={post.status} />
         </div>

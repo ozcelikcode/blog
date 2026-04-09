@@ -22,6 +22,7 @@ interface RawPostRow {
   excerpt: string;
   id: number;
   isFeatured: number;
+  showAuthorInMeta: number;
   publishedAt: string | null;
   seoDescription: string | null;
   seoTitle: string | null;
@@ -52,6 +53,7 @@ export interface PostRecord {
   id: number;
   isFeatured: boolean;
   publishedAt: string;
+  showAuthorInMeta: boolean;
   seoDescription: string | null;
   seoTitle: string | null;
   slug: string;
@@ -120,6 +122,7 @@ function postSelectionSql(): string {
       p.content_markdown as contentMarkdown,
       p.cover_image_url as coverImageUrl,
       p.is_featured as isFeatured,
+      p.show_author_in_meta as showAuthorInMeta,
       p.seo_title as seoTitle,
       p.seo_description as seoDescription,
       p.canonical_url as canonicalUrl,
@@ -186,6 +189,7 @@ function mapPostRows(rows: RawPostRow[], context: DatabaseContext): PostRecord[]
       id: row.id,
       isFeatured: Boolean(row.isFeatured),
       publishedAt: row.publishedAt,
+      showAuthorInMeta: Boolean(row.showAuthorInMeta),
       seoDescription: row.seoDescription,
       seoTitle: row.seoTitle,
       slug: row.slug,

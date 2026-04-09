@@ -29,6 +29,7 @@ export const posts = sqliteTable(
       enum: ["draft", "scheduled", "published"],
     }).notNull(),
     isFeatured: integer("is_featured", { mode: "boolean" }).notNull().default(false),
+    showAuthorInMeta: integer("show_author_in_meta", { mode: "boolean" }).notNull().default(true),
     seoTitle: text("seo_title"),
     seoDescription: text("seo_description"),
     canonicalUrl: text("canonical_url"),

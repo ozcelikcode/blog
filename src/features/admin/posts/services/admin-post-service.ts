@@ -37,6 +37,11 @@ export interface AdminPostsPageData {
 
 export interface AdminPostEditorPageData {
   authors: ReturnType<typeof listAdminAuthorOptions>;
+  sessionAuthor: {
+    email: string;
+    id: number | null;
+    name: string;
+  } | null;
   mediaAssets: Array<{
     altText: string | null;
     fileName: string;
@@ -52,6 +57,7 @@ export interface AdminPostEditorPageData {
     isFeatured: boolean;
     postId?: string;
     publishedAt: string;
+    showAuthorInMeta: boolean;
     seoDescription: string;
     seoTitle: string;
     slug: string;
@@ -72,6 +78,7 @@ function toEditorValues(post?: ReturnType<typeof getAdminPostById>): AdminPostEd
       excerpt: "",
       isFeatured: false,
       publishedAt: "",
+      showAuthorInMeta: true,
       seoDescription: "",
       seoTitle: "",
       slug: "",
@@ -90,6 +97,7 @@ function toEditorValues(post?: ReturnType<typeof getAdminPostById>): AdminPostEd
     isFeatured: post.isFeatured,
     postId: String(post.id),
     publishedAt: post.publishedAt ? post.publishedAt.slice(0, 16) : "",
+    showAuthorInMeta: post.showAuthorInMeta,
     seoDescription: post.seoDescription ?? "",
     seoTitle: post.seoTitle ?? "",
     slug: post.slug,
@@ -237,9 +245,26 @@ export function getAdminPostEditorPageData(
   }
 
   const authors = listAdminAuthorOptions();
+  const preferredAuthorId = resolvePreferredAuthorId(authors, actor);
+  const parsedPreferredAuthorId = Number.parseInt(preferredAuthorId, 10);
+  const sessionAuthor =
+    actor && preferredAuthorId
+      ? {
+          email: actor.email,
+          id: Number.isFinite(parsedPreferredAuthorId) ? parsedPreferredAuthorId : null,
+          name: actor.name,
+        }
+      : actor
+        ? {
+            email: actor.email,
+            id: null,
+            name: actor.name,
+          }
+        : null;
 
   return {
     authors,
+    sessionAuthor,
     mediaAssets: listAdminMediaAssets({
       limit: 12,
       offset: 0,
@@ -253,7 +278,7 @@ export function getAdminPostEditorPageData(
       ? toEditorValues(post)
       : {
           ...toEditorValues(),
-          authorId: resolvePreferredAuthorId(authors, actor),
+          authorId: preferredAuthorId,
         },
     tags: listAdminTagOptions(),
   };
@@ -364,6 +389,7 @@ export async function mutateAdminPost(
     excerpt: input.excerpt,
     isFeatured: input.isFeatured,
     publishedAt: persistence.publishedAt,
+    showAuthorInMeta: input.showAuthorInMeta,
     seoDescription: input.seoDescription,
     seoTitle: input.seoTitle,
     slug: input.slug,
@@ -374,13 +400,27 @@ export async function mutateAdminPost(
 
   let postId = input.postId;
   const existing = typeof postId === "number" ? getAdminPostById(postId, dbContext) : null;
+  const authorIdForPersistence = existing?.authorId ?? actor.authorId ?? input.authorId;
 
   dbContext.sqlite.transaction(() => {
     if (existing) {
-      updateAdminPost(existing.id, persistenceInput, dbContext);
+      updateAdminPost(
+        existing.id,
+        {
+          ...persistenceInput,
+          authorId: authorIdForPersistence,
+        },
+        dbContext,
+      );
       replaceAdminPostTags(existing.id, input.tagIds, dbContext);
     } else {
-      postId = insertAdminPost(persistenceInput, dbContext);
+      postId = insertAdminPost(
+        {
+          ...persistenceInput,
+          authorId: authorIdForPersistence,
+        },
+        dbContext,
+      );
       replaceAdminPostTags(postId, input.tagIds, dbContext);
     }
   })();

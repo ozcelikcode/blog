@@ -26,6 +26,7 @@ export interface PostListItem {
   isFeatured: boolean;
   publishedAt: string;
   readingTimeMinutes: number;
+  showAuthorInMeta: boolean;
   slug: string;
   tags: TagSummary[];
   title: string;
