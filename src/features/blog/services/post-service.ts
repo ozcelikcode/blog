@@ -111,6 +111,11 @@ export interface SearchPageData {
   settings: SiteSettingsRecord;
 }
 
+export interface TagsIndexData {
+  settings: SiteSettingsRecord;
+  tags: TagSummary[];
+}
+
 export function getHomePageData(): HomePageData {
   const settings = getSiteSettings();
 
@@ -216,6 +221,13 @@ export function getFeedPosts(): PostListItem[] {
   }).map(mapPostListItem);
 }
 
+export function getTagsIndexData(): TagsIndexData {
+  return {
+    settings: getSiteSettings(),
+    tags: listTagsWithPostCount(),
+  };
+}
+
 export function getSitemapEntries(): Array<{ path: string; updatedAt: string }> {
   const posts = listPublishedPostSlugs();
   const tags = listTagsWithPostCount();
@@ -223,6 +235,7 @@ export function getSitemapEntries(): Array<{ path: string; updatedAt: string }> 
   return [
     { path: "/", updatedAt: new Date().toISOString() },
     { path: "/blog", updatedAt: new Date().toISOString() },
+    { path: "/tags", updatedAt: new Date().toISOString() },
     { path: "/search", updatedAt: new Date().toISOString() },
     ...posts.map((post) => ({
       path: `/blog/${post.slug}`,

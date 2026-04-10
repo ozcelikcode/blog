@@ -1,4 +1,7 @@
 import { subscribeToNewsletter } from "@/features/newsletter/services/newsletter-service";
+import { createRateLimiter } from "@/lib/http/rate-limit";
+
+const newsletterLimiter = createRateLimiter({ maxAttempts: 5, windowMs: 10 * 60 * 1000 });
 
 function resolveRedirectTarget(input: string | null): string {
   if (!input?.startsWith("/")) {
@@ -8,7 +11,19 @@ function resolveRedirectTarget(input: string | null): string {
   return input;
 }
 
+function getClientIp(request: Request): string {
+  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+}
+
 export async function POST({ request }: { request: Request }) {
+  const clientIp = getClientIp(request);
+
+  if (newsletterLimiter.isRateLimited(clientIp)) {
+    return new Response("Too Many Requests", { status: 429 });
+  }
+
+  newsletterLimiter.recordAttempt(clientIp);
+
   const formData = await request.formData();
   const email = String(formData.get("email") ?? "");
   const redirectTo = resolveRedirectTarget(
@@ -32,3 +47,4 @@ export async function POST({ request }: { request: Request }) {
     303,
   );
 }
+

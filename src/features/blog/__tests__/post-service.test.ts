@@ -8,6 +8,7 @@ import {
   getPostPageData,
   getSearchPageData,
   getTagPageData,
+  getTagsIndexData,
 } from "../services/post-service";
 
 let cleanup: (() => void) | undefined;
@@ -49,5 +50,12 @@ describe("post service", () => {
 
     expect(data.pagination.totalItems).toBe(6);
     expect(data.pagination.items).toHaveLength(6);
+  });
+
+  it("returns all tags with post counts for the tags index", () => {
+    const data = getTagsIndexData();
+
+    expect(data.tags.length).toBeGreaterThan(0);
+    expect(data.tags[0]).toHaveProperty("postCount");
   });
 });
